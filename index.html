@@ -43,7 +43,7 @@
       border-radius: 0px !important;
     }
 
-    /* FIKSIRAN SAJT — BEZ SKROLOVANJA I POMERANJA EKRANA */
+    /* FIKSIRAN EKRAN — BEZ SKROLOVANJA I POMERANJA EKRANA */
     html, body {
       width: 100vw;
       height: 100vh;
@@ -474,7 +474,7 @@
       display: block;
     }
 
-    /* SISTEM DUGMADI SA MIKRO-ANIMACIJAMA */
+    /* DUGMAD */
     .btn-row {
       display: flex;
       align-items: center;
@@ -751,90 +751,68 @@
       transition: width 0.25s linear;
     }
 
-    /* FOOTER PRESLIKAN SA HEADER ELEMENTIMA */
+    /* FOOTER SA TRI LINKA BEZ LOGOA */
     .main-footer {
       background: var(--panel);
       border-top: 1px solid var(--border);
-      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
       flex-shrink: 0;
       z-index: 90;
     }
 
-    .footer-content {
+    .footer-links-row {
       max-width: 800px;
       margin: 0 auto;
       padding: 10px 16px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .footer-actions {
-      display: flex;
-      align-items: center;
+      justify-content: space-around;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
-    .footer-btn-nav {
+    .footer-link-btn {
+      flex: 1 1 auto;
+      min-width: 100px;
+      max-width: 220px;
       background: var(--panel-inner);
       border: 1px solid var(--border);
       color: var(--text-muted);
       font-family: var(--font-mono);
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      padding: 8px 12px;
-      cursor: pointer;
+      padding: 9px 12px;
+      text-decoration: none;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .footer-btn-nav:hover {
+    .footer-link-btn:hover {
       border-color: var(--border-focus);
+      background: #111722;
       color: #fff;
       transform: translateY(-2px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
     }
 
-    .footer-btn-nav:active {
-      transform: scale(0.96);
+    .footer-link-btn:active {
+      transform: translateY(1px) scale(0.97);
     }
 
-    .footer-btn-menu {
-      width: 36px;
-      height: 36px;
-      background: var(--panel-inner);
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
-      padding: 0;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .footer-btn-menu:hover {
-      border-color: var(--border-focus);
-      transform: scale(1.05);
-    }
-
-    .footer-btn-menu:active {
-      transform: scale(0.95);
-    }
-
-    .footer-btn-menu span {
-      display: block;
-      width: 16px;
-      height: 2px;
-      background: var(--text);
+    .footer-link-btn.external {
+      color: var(--border-focus);
     }
 
     .footer-meta-strip {
       max-width: 800px;
       margin: 0 auto;
-      padding: 4px 16px 8px;
+      padding: 4px 16px 6px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -1244,7 +1222,7 @@
     </div>
   </div>
 
-  <!-- NOVI FOOTER (PRESLIKAN HEADER SA BRZOM NAVIGACIJOM I TROBOJNICOM) -->
+  <!-- FOOTER SA TRI LINKA IZ MENIJA (BEZ LOGOA) -->
   <footer class="main-footer">
     <div class="flag-bar">
       <div class="f-red"></div>
@@ -1252,22 +1230,16 @@
       <div class="f-white"></div>
     </div>
     
-    <div class="footer-content">
-      <a class="brand" onclick="openWindow('win-landing')">
-        <img src="logo.png" alt="МОБА" onerror="this.style.display='none'; document.getElementById('altBrandFooter').style.display='block';">
-        <span id="altBrandFooter" class="brand-fallback" style="display:none; font-size: 1rem;">ПОКРЕТ МОБА</span>
+    <div class="footer-links-row">
+      <button class="footer-link-btn" type="button" onclick="openWindow('win-landing')">
+        Почетна
+      </button>
+      <button class="footer-link-btn" type="button" onclick="openWindow('win-security')">
+        Сигурност
+      </button>
+      <a class="footer-link-btn external" href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer">
+        Званични сајт ↗
       </a>
-
-      <div class="footer-actions">
-        <button class="footer-btn-nav" type="button" onclick="openWindow('win-security')">
-          Сигурност
-        </button>
-        <button class="footer-btn-menu" type="button" aria-label="Мени" onclick="toggleNav(true)">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
     </div>
 
     <div class="footer-meta-strip">
