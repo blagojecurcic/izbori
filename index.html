@@ -39,27 +39,42 @@
       box-sizing: border-box;
       -webkit-font-smoothing: antialiased;
       user-select: none;
-      border-radius: 0px !important; /* Строго оштре ивице */
+      -webkit-user-select: none;
+      border-radius: 0px !important;
+    }
+
+    /* FIKSIRAN SAJT — BEZ SKROLOVANJA I POMERANJA EKRANA */
+    html, body {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden !important;
+      position: fixed;
+      inset: 0;
+      touch-action: none;
+      overscroll-behavior: none;
     }
 
     input, select {
       user-select: auto;
+      -webkit-user-select: auto;
     }
 
     body {
-      min-height: 100vh;
       background-color: var(--bg);
       color: var(--text);
       font-family: var(--font-sans);
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
     }
 
-    /* INSTITUCIONALNA ZASTAVA */
+    /* TROBOJNICA */
     .flag-bar {
       height: 4px;
       width: 100%;
       display: flex;
+      flex-shrink: 0;
     }
     .f-red { flex: 1; background: var(--red); }
     .f-blue { flex: 1; background: var(--blue); }
@@ -71,6 +86,8 @@
       border-bottom: 1px solid var(--border);
       padding: 10px 16px;
       padding-top: max(10px, env(safe-area-inset-top));
+      flex-shrink: 0;
+      z-index: 100;
     }
 
     .header-container {
@@ -79,19 +96,20 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 12px;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
       cursor: pointer;
     }
 
     .brand img {
-      height: 38px;
+      height: 44px;
+      max-height: 48px;
       width: auto;
       display: block;
       object-fit: contain;
@@ -99,63 +117,180 @@
 
     .brand-fallback {
       font-weight: 900;
-      font-size: 1.1rem;
+      font-size: 1.25rem;
       letter-spacing: 2px;
       color: #fff;
     }
 
-    /* NAVIGACIJA U HEADERU */
-    .header-nav {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .nav-link-btn {
+    /* HAMBURGER DUGME */
+    .hamburger-btn {
+      width: 42px;
+      height: 42px;
       background: var(--panel-inner);
       border: 1px solid var(--border);
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 6px 10px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      gap: 4px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      transition: all 0.15s ease;
-      white-space: nowrap;
+      gap: 5px;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .nav-link-btn:hover {
+    .hamburger-btn:hover {
       border-color: var(--border-focus);
-      color: #fff;
-      background: #111722;
+      transform: scale(1.04);
     }
 
-    .nav-link-btn.external {
+    .hamburger-btn:active {
+      transform: scale(0.96);
+    }
+
+    .hamburger-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--text);
+      transition: transform 0.2s, opacity 0.2s;
+    }
+
+    /* HAMBURGER DRAWER */
+    .nav-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .nav-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(300px, 80vw);
+      height: 100%;
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      z-index: 201;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      padding-top: max(20px, env(safe-area-inset-top));
+    }
+
+    .drawer-menu.open {
+      transform: translateX(0);
+    }
+
+    .drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 14px;
+      margin-bottom: 20px;
+    }
+
+    .drawer-title {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .drawer-close {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 1.4rem;
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 8px;
+      transition: transform 0.15s ease;
+    }
+
+    .drawer-close:hover {
+      transform: scale(1.15);
       color: var(--border-focus);
     }
 
-    /* GLAVNI PANEL */
+    .drawer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .drawer-link {
+      background: var(--panel-inner);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 14px 16px;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .drawer-link:hover {
+      border-color: var(--border-focus);
+      background: #111722;
+      color: #fff;
+      transform: translateX(3px);
+    }
+
+    .drawer-link:active {
+      transform: scale(0.98);
+    }
+
+    .drawer-link.external {
+      color: var(--border-focus);
+    }
+
+    /* GLAVNI PROSTOR */
     main {
       flex: 1;
-      width: min(600px, calc(100% - 24px));
-      margin: 24px auto 36px;
+      width: min(540px, calc(100% - 24px));
+      margin: 10px auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-y: auto;
+      touch-action: pan-y;
+      scrollbar-width: none;
+    }
+
+    main::-webkit-scrollbar {
+      display: none;
     }
 
     .app-box {
       background: var(--panel);
       border: 1px solid var(--border);
-      padding: 24px 20px;
+      padding: 20px 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     }
 
-    @media (min-width: 540px) {
+    @media (min-width: 480px) {
       .app-box {
-        padding: 30px;
+        padding: 24px 20px;
       }
     }
 
@@ -164,17 +299,23 @@
     }
     .window.active {
       display: block;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .win-head {
       border-bottom: 1px solid var(--border);
-      padding-bottom: 14px;
-      margin-bottom: 22px;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     .win-tag {
       font-family: var(--font-mono);
-      font-size: 0.7rem;
+      font-size: 0.72rem;
       color: var(--text-dim);
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -184,7 +325,7 @@
 
     .win-title {
       font-size: 1.35rem;
-      font-weight: 700;
+      font-weight: 900;
       letter-spacing: -0.5px;
       color: #fff;
     }
@@ -193,23 +334,23 @@
       font-size: 0.85rem;
       color: var(--text-muted);
       margin-top: 4px;
-      line-height: 1.45;
+      line-height: 1.4;
     }
 
-    /* FORMA & ELEMENTI */
+    /* FORME */
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 14px;
     }
 
     .label-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
     }
 
     label {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 600;
       color: var(--text-muted);
       text-transform: uppercase;
@@ -229,9 +370,10 @@
       border: 1px solid var(--border);
       padding: 0 14px;
       color: #fff;
-      font-size: 16px; /* Spriječava iOS auto-zoom */
+      font-size: 16px;
       font-family: inherit;
       outline: none;
+      transition: border-color 0.2s;
     }
 
     .control-input:focus {
@@ -246,7 +388,7 @@
 
     select.control-input {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%238b949e' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: right 14px center;
       cursor: pointer;
@@ -261,27 +403,34 @@
     .ballot-item {
       background: var(--panel-inner);
       border: 1px solid var(--border);
-      padding: 16px;
+      padding: 14px;
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       cursor: pointer;
-      margin-bottom: 24px;
-      transition: background 0.1s;
+      margin-bottom: 18px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .ballot-item:hover {
       background: #111722;
+      border-color: var(--border-focus);
+      transform: translateY(-2px);
+    }
+
+    .ballot-item:active {
+      transform: scale(0.99);
     }
 
     .ballot-item.selected {
       border: 1px solid var(--border-focus);
       background: #111a2e;
+      box-shadow: inset 0 0 0 1px var(--border-focus);
     }
 
     .ballot-num {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border: 1px solid var(--border);
       background: var(--panel);
       display: grid;
@@ -290,6 +439,7 @@
       font-size: 1.1rem;
       font-weight: 700;
       color: #fff;
+      flex-shrink: 0;
     }
 
     .ballot-item.selected .ballot-num {
@@ -298,14 +448,14 @@
     }
 
     .ballot-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
       color: #fff;
       display: block;
     }
 
     .ballot-sub {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       display: block;
       margin-top: 2px;
@@ -313,56 +463,65 @@
 
     .ballot-badge {
       font-family: var(--font-mono);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--border-focus);
       display: none;
       font-weight: 700;
+      white-space: nowrap;
     }
 
     .ballot-item.selected .ballot-badge {
       display: block;
     }
 
-    /* DUGMAD */
+    /* SISTEM DUGMADI SA MIKRO-ANIMACIJAMA */
     .btn-row {
       display: flex;
+      align-items: center;
       gap: 10px;
-      margin-top: 24px;
-    }
-
-    @media (max-width: 480px) {
-      .btn-row {
-        flex-direction: column-reverse;
-      }
-      .btn-secondary, .btn-primary {
-        width: 100%;
-      }
+      margin-top: 18px;
+      width: 100%;
     }
 
     .btn {
-      height: 48px;
       border: 1px solid transparent;
-      padding: 0 18px;
-      font-size: 0.88rem;
-      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      font-family: var(--font-sans);
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      font-weight: 700;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(1px) scale(0.98);
     }
 
     .btn-primary {
+      flex: 1;
+      height: 48px;
       background: var(--blue);
       color: #fff;
       border-color: var(--blue);
-      flex: 1;
+      font-size: 0.9rem;
+      font-weight: 800;
+      padding: 0 16px;
     }
 
     .btn-primary:hover:not(:disabled) {
       background: var(--blue-hover);
+      border-color: var(--blue-hover);
+      box-shadow: 0 4px 14px rgba(31, 111, 235, 0.4);
     }
 
     .btn-primary:disabled {
@@ -370,42 +529,60 @@
       border-color: var(--border);
       color: var(--text-dim);
       cursor: not-allowed;
+      opacity: 0.6;
+      transform: none !important;
+      box-shadow: none !important;
     }
 
     .btn-secondary {
+      flex: 0 0 auto;
+      height: 48px;
+      padding: 0 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
       background: transparent;
       border-color: var(--border);
       color: var(--text-muted);
+      letter-spacing: 0.3px;
     }
 
     .btn-secondary:hover {
       background: var(--panel-inner);
       color: #fff;
+      border-color: var(--text-dim);
     }
 
     .btn-hero {
       width: 100%;
-      height: 54px;
+      height: 52px;
       background: var(--blue);
       border: 1px solid var(--blue);
       color: #fff;
       font-size: 1rem;
-      font-weight: 700;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 1px;
       cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .btn-hero:hover {
       background: var(--blue-hover);
+      border-color: var(--blue-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(31, 111, 235, 0.45);
     }
 
-    /* TABELA PODATAKA */
+    .btn-hero:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    /* TABELA */
     .data-table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 22px;
-      font-size: 0.88rem;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
     }
 
     .data-table tr {
@@ -413,7 +590,7 @@
     }
 
     .data-table td {
-      padding: 12px 10px;
+      padding: 10px 8px;
     }
 
     .data-table td.label-col {
@@ -421,7 +598,7 @@
       color: var(--text-muted);
       font-weight: 600;
       text-transform: uppercase;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       border-right: 1px solid var(--border);
       background: var(--panel-inner);
     }
@@ -429,6 +606,7 @@
     .data-table td.val-col {
       color: #fff;
       font-weight: 600;
+      word-break: break-word;
     }
 
     .val-col.mono {
@@ -436,15 +614,15 @@
       color: var(--border-focus);
     }
 
-    /* POTVRDA STATUSA */
+    /* STATUS POTVRDA */
     .status-alert {
       border: 1px solid var(--green);
       background: rgba(35, 134, 54, 0.12);
-      padding: 16px;
-      margin-bottom: 20px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .status-check {
@@ -461,34 +639,34 @@
 
     .status-text-main {
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       color: #fff;
     }
 
     .status-text-sub {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       margin-top: 2px;
     }
 
-    /* SIGURNOST I ZASTITA STRANICA */
+    /* SIGURNOST */
     .sec-block {
       background: var(--panel-inner);
       border: 1px solid var(--border);
-      padding: 16px;
-      margin-bottom: 14px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
     }
 
     .sec-block-title {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: #fff;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
     .sec-block-title span {
@@ -497,23 +675,23 @@
     }
 
     .sec-block p {
-      font-size: 0.82rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
-      line-height: 1.55;
+      line-height: 1.45;
     }
 
-    /* REALISTIČNI OBRADA PODATAKA OVERLAY */
+    /* ANIMIRANI OVERLAY */
     .processing-overlay {
       position: fixed;
       inset: 0;
       background: rgba(13, 17, 23, 0.95);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(8px);
       display: none;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       z-index: 1000;
-      padding: 24px;
+      padding: 20px;
     }
 
     .processing-overlay.active {
@@ -521,10 +699,10 @@
     }
 
     .proc-box {
-      width: min(440px, 100%);
+      width: min(420px, 100%);
       background: var(--panel);
       border: 1px solid var(--border);
-      padding: 24px;
+      padding: 22px 18px;
       text-align: left;
     }
 
@@ -547,13 +725,13 @@
 
     .proc-log {
       font-family: var(--font-mono);
-      font-size: 0.76rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       background: var(--panel-inner);
       border: 1px solid var(--border);
       padding: 10px 12px;
       margin-bottom: 16px;
-      min-height: 38px;
+      min-height: 40px;
       display: flex;
       align-items: center;
     }
@@ -573,34 +751,112 @@
       transition: width 0.25s linear;
     }
 
-    /* FOOTER */
-    footer {
-      max-width: 800px;
-      width: calc(100% - 24px);
-      margin: 0 auto 24px;
+    /* FOOTER PRESLIKAN SA HEADER ELEMENTIMA */
+    .main-footer {
+      background: var(--panel);
       border-top: 1px solid var(--border);
-      padding-top: 14px;
+      padding-bottom: max(10px, env(safe-area-inset-bottom));
+      flex-shrink: 0;
+      z-index: 90;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-btn-nav {
+      background: var(--panel-inner);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .footer-btn-nav:hover {
+      border-color: var(--border-focus);
+      color: #fff;
+      transform: translateY(-2px);
+    }
+
+    .footer-btn-nav:active {
+      transform: scale(0.96);
+    }
+
+    .footer-btn-menu {
+      width: 36px;
+      height: 36px;
+      background: var(--panel-inner);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 0;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .footer-btn-menu:hover {
+      border-color: var(--border-focus);
+      transform: scale(1.05);
+    }
+
+    .footer-btn-menu:active {
+      transform: scale(0.95);
+    }
+
+    .footer-btn-menu span {
+      display: block;
+      width: 16px;
+      height: 2px;
+      background: var(--text);
+    }
+
+    .footer-meta-strip {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4px 16px 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 0.72rem;
-      color: var(--text-dim);
+      border-top: 1px solid rgba(48, 54, 61, 0.4);
       font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
     }
 
-    /* DOKUMENT ZA STAMPU / PDF */
+    /* ŠTAMPA */
     .print-header, .print-footer-lines {
       display: none;
     }
 
     @media print {
-      body {
+      html, body {
+        overflow: visible !important;
+        position: static !important;
         background: #fff !important;
         color: #000 !important;
       }
-      .flag-bar, .top-header, footer, .btn-row, .btn-hero, .status-alert, .processing-overlay {
+      .flag-bar, .top-header, .main-footer, .btn-row, .btn-hero, .status-alert, .processing-overlay, .drawer-menu, .nav-overlay {
         display: none !important;
       }
       main {
@@ -611,6 +867,7 @@
         border: none !important;
         background: transparent !important;
         padding: 0 !important;
+        box-shadow: none !important;
       }
       .window {
         display: none !important;
@@ -667,7 +924,7 @@
 </head>
 <body>
 
-  <!-- TROBOJNICA -->
+  <!-- TROBOJNICA GORE -->
   <div class="flag-bar">
     <div class="f-red"></div>
     <div class="f-blue"></div>
@@ -682,17 +939,36 @@
         <span id="altBrand" class="brand-fallback" style="display:none;">ПОКРЕТ МОБА</span>
       </a>
 
-      <nav class="header-nav">
-        <button class="nav-link-btn" type="button" onclick="openWindow('win-security')">
-          Сигурност и заштита
-        </button>
-        <a class="nav-link-btn external" href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer">
-          Званични сајт ↗
-        </a>
-      </nav>
+      <!-- HAMBURGER DUGME -->
+      <button class="hamburger-btn" type="button" aria-label="Мени" onclick="toggleNav(true)">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
     </div>
   </header>
 
+  <!-- HAMBURGER DRAWER -->
+  <div class="nav-overlay" id="navOverlay" onclick="toggleNav(false)"></div>
+  <aside class="drawer-menu" id="drawerMenu">
+    <div class="drawer-head">
+      <span class="drawer-title">НАВИГАЦИЈА</span>
+      <button class="drawer-close" type="button" onclick="toggleNav(false)">✕</button>
+    </div>
+    <div class="drawer-links">
+      <a class="drawer-link" href="#" onclick="openWindow('win-landing'); toggleNav(false); return false;">
+        Почетна <span>→</span>
+      </a>
+      <a class="drawer-link" href="#" onclick="openWindow('win-security'); toggleNav(false); return false;">
+        Сигурност и приватност <span>→</span>
+      </a>
+      <a class="drawer-link external" href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer">
+        Званични сајт ↗
+      </a>
+    </div>
+  </aside>
+
+  <!-- GLAVNI SADRŽAJ -->
   <main>
     <div class="app-box">
 
@@ -704,8 +980,8 @@
           <p class="win-desc">Званични електронски регистар Покрета МОБА за спровођење изборног процеса.</p>
         </div>
 
-        <div style="background: var(--panel-inner); border: 1px solid var(--border); padding: 16px; margin-bottom: 20px;">
-          <p style="font-size: 0.85rem; line-height: 1.5; color: var(--text-muted);">
+        <div style="background: var(--panel-inner); border: 1px solid var(--border); padding: 14px; margin-bottom: 18px;">
+          <p style="font-size: 0.82rem; line-height: 1.45; color: var(--text-muted);">
             Приступом овом порталу потврђујете унос тачних личних података. Сваки глас је појединачан и бележи се у тренутку подношења.
           </p>
         </div>
@@ -715,7 +991,7 @@
         </button>
       </section>
 
-      <!-- PROZOR: SIGURNOST I ZASTITA -->
+      <!-- PROZOR: SIGURNOST -->
       <section class="window" id="win-security">
         <div class="win-head">
           <span class="win-tag">Информације</span>
@@ -740,7 +1016,7 @@
 
         <div class="btn-row">
           <button class="btn btn-secondary" type="button" onclick="openWindow('win-landing')">
-            ← Повратак на гласање
+            ← Повратак
           </button>
         </div>
       </section>
@@ -824,10 +1100,10 @@
 
           <div class="btn-row">
             <button class="btn btn-secondary" type="button" onclick="openWindow('win-landing')">
-              Назад
+              ← Назад
             </button>
             <button class="btn btn-primary" type="button" id="btnToBallot" disabled onclick="triggerVoterVerification()">
-              Следећи корак
+              Следећи корак →
             </button>
           </div>
 
@@ -853,15 +1129,15 @@
 
         <div class="btn-row">
           <button class="btn btn-secondary" type="button" onclick="openWindow('win-form')">
-            Назад
+            ← Назад
           </button>
           <button class="btn btn-primary" type="button" id="btnToConfirm" disabled onclick="proceedToConfirm()">
-            Прегледај избор
+            Прегледај избор →
           </button>
         </div>
       </section>
 
-      <!-- KORAK 3: PROVERA IZBORA -->
+      <!-- KORAK 3: PROVERA -->
       <section class="window" id="win-confirm">
         <div class="win-head">
           <span class="win-tag">Корак 3 од 3</span>
@@ -890,15 +1166,15 @@
 
         <div class="btn-row">
           <button class="btn btn-secondary" type="button" onclick="openWindow('win-ballot')">
-            Измени
+            ← Измени
           </button>
           <button class="btn btn-primary" type="button" onclick="triggerVoteSealing()">
-            ПОТВРДИ ГЛАС
+            ПОТВРДИ ГЛАС ✓
           </button>
         </div>
       </section>
 
-      <!-- KORAK 4: ZADNJI PANEL (POTVRDA) -->
+      <!-- KORAK 4: POTVRDA -->
       <section class="window" id="win-receipt">
         
         <div class="print-header">
@@ -947,7 +1223,7 @@
             Почетна
           </button>
           <button class="btn btn-primary" type="button" onclick="window.print()">
-            Сачувај као PDF
+            Сачувај као PDF ⎙
           </button>
         </div>
 
@@ -968,9 +1244,36 @@
     </div>
   </div>
 
-  <footer>
-    <span>МОБА // 2026</span>
-    <span>ИЗБОРНИ ПРОТОКОЛ v1.2 MOBILE-FIRST</span>
+  <!-- NOVI FOOTER (PRESLIKAN HEADER SA BRZOM NAVIGACIJOM I TROBOJNICOM) -->
+  <footer class="main-footer">
+    <div class="flag-bar">
+      <div class="f-red"></div>
+      <div class="f-blue"></div>
+      <div class="f-white"></div>
+    </div>
+    
+    <div class="footer-content">
+      <a class="brand" onclick="openWindow('win-landing')">
+        <img src="logo.png" alt="МОБА" onerror="this.style.display='none'; document.getElementById('altBrandFooter').style.display='block';">
+        <span id="altBrandFooter" class="brand-fallback" style="display:none; font-size: 1rem;">ПОКРЕТ МОБА</span>
+      </a>
+
+      <div class="footer-actions">
+        <button class="footer-btn-nav" type="button" onclick="openWindow('win-security')">
+          Сигурност
+        </button>
+        <button class="footer-btn-menu" type="button" aria-label="Мени" onclick="toggleNav(true)">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="footer-meta-strip">
+      <span>МОБА // 2026</span>
+      <span>ИЗБОРНИ ПРОТОКОЛ v1.3 STRICT-LOCK</span>
+    </div>
   </footer>
 
   <script>
@@ -984,12 +1287,33 @@
 
     let hasVoted = false;
 
+    // SPREČAVANJE PREVLAČENJA (PULL-TO-REFRESH I OVERSCROLL BOUNCE)
+    document.addEventListener('touchmove', function(e) {
+      if (!e.target.closest('main')) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // KONTROLA HAMBURGER MENIJA
+    function toggleNav(show) {
+      const drawer = document.getElementById("drawerMenu");
+      const overlay = document.getElementById("navOverlay");
+      if (show) {
+        drawer.classList.add("open");
+        overlay.classList.add("open");
+      } else {
+        drawer.classList.remove("open");
+        overlay.classList.remove("open");
+      }
+    }
+
     function openWindow(winId) {
       document.querySelectorAll(".window").forEach(w => w.classList.remove("active"));
       const target = document.getElementById(winId);
       if (target) {
         target.classList.add("active");
-        window.scrollTo(0, 0);
+        const mainEl = document.querySelector("main");
+        if (mainEl) mainEl.scrollTop = 0;
       }
     }
 
@@ -1024,7 +1348,7 @@
       btnToBallot.disabled = !(isNameValid && isCityValid && isIdValid);
     }
 
-    // ANIMACIJA: VERIFIKACIJA PODATAKA BIRAČA
+    // ANIMACIJA: VERIFIKACIJA PODATAKA
     function triggerVoterVerification() {
       voterData.fullName = fullNameInput.value.trim();
       voterData.city = citySelect.value;
