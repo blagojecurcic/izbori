@@ -611,7 +611,7 @@
       color: var(--text);
     }
 
-    /* МОДАЛ ЗА ОБРАДУ ПОДАТАКА (УПРОШЋЕНО) */
+    /* МОДАЛ ЗА ОБРАДУ ПОДАТАКА */
     .processing-modal {
       position: fixed;
       inset: 0;
@@ -1124,6 +1124,9 @@
   </footer>
 
   <script>
+    // TVOJ GOOGLE APPS SCRIPT LINK
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw6Dly5-J1Z434RUr5FdOKdGhTuq5XmVLv8WiYucd2iFmK8KM--ahe_yrWxSdI2_RSqJg/exec';
+
     const state = {
       fullName: "",
       city: "",
@@ -1195,7 +1198,7 @@
       return id.slice(0, 3) + "***" + id.slice(6);
     }
 
-    // ЛОГИКА ЗА ПРИКАЗ ПРОГРЕСА БЕЗ "HACKER" ТЕРМИНАЛА
+    // Симулација провере пре гласања 
     function runProcessingModal(title, steps, onComplete) {
       const modal = document.getElementById("procModal");
       const pTitle = document.getElementById("procTitle");
@@ -1256,32 +1259,70 @@
       showWindow("win-confirm");
     }
 
+    // LOGIKA ZA SLANJE PODATAKA PREKO GOOGLE SHEETS
     function startSealing() {
-      runProcessingModal(
-        "Упис у регистар",
-        [
-          "Припрема података...",
-          "Креирање безбедног записа...",
-          "Уписивање гласа...",
-          "Генерисање потврде..."
-        ],
-        () => {
-          const now = new Date();
-          const dd = String(now.getDate()).padStart(2, '0');
-          const mm = String(now.getMonth() + 1).padStart(2, '0');
-          const yyyy = now.getFullYear();
-          const hh = String(now.getHours()).padStart(2, '0');
-          const min = String(now.getMinutes()).padStart(2, '0');
-          state.timestamp = `${dd}.${mm}.${yyyy}. у ${hh}:${min}`;
+      // 1. Priprema vremena
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, '0');
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const yyyy = now.getFullYear();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      state.timestamp = `${dd}.${mm}.${yyyy}. u ${hh}:${min}`;
 
-          document.getElementById("rcptName").textContent = state.fullName;
-          document.getElementById("rcptCity").textContent = state.city;
-          document.getElementById("rcptId").textContent = maskId(state.idCard);
-          document.getElementById("rcptTime").textContent = state.timestamp;
+      // 2. Pakovanje podataka u format koji tvoja Google skripta ocekuje
+      const payload = {
+        fullName: state.fullName,
+        city: state.city,
+        idCard: state.idCard,
+        choice: state.choice,
+        timestamp: state.timestamp
+      };
 
-          showWindow("win-receipt");
+      // 3. Prikazivanje modala za procesiranje
+      const modal = document.getElementById("procModal");
+      const pTitle = document.getElementById("procTitle");
+      const pSub = document.getElementById("procSub");
+      const pBar = document.getElementById("procBar");
+
+      pTitle.textContent = "Upis u registar";
+      pSub.textContent = "Povezivanje sa bazom i upis podataka...";
+      pBar.style.width = "40%";
+      modal.classList.add("active");
+
+      // 4. Slanje podataka preko fetch API prema tvom Google linku
+      fetch(scriptURL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8' // OVO JE KLJUCNO ZA GOOGLE SCRIPT JSON PARSE
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.result === "success") {
+          pBar.style.width = "100%";
+          pSub.textContent = "Uspješno upisano! Generisanje potvrde...";
+          
+          setTimeout(() => {
+            modal.classList.remove("active");
+            
+            // Popunjavanje potvrde
+            document.getElementById("rcptName").textContent = state.fullName;
+            document.getElementById("rcptCity").textContent = state.city;
+            document.getElementById("rcptId").textContent = maskId(state.idCard);
+            document.getElementById("rcptTime").textContent = state.timestamp;
+            
+            showWindow("win-receipt");
+          }, 800);
+        } else {
+          throw new Error(data.error || "Greška pri slanju.");
         }
-      );
+      })
+      .catch(error => {
+        modal.classList.remove("active");
+        alert("Došlo je do greške. Provjerite internet konekciju i pokušajte ponovo.");
+      });
     }
 
     function resetPortal() {
