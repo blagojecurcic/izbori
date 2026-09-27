@@ -3,38 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#070a0f">
-
   <title>МОБА — Званични систем за гласање</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #070a0f;
-      --panel: #111722;
-      --panel-inner: #0a0e15;
-      --panel-elevated: #161e2b;
-      --line: #222c3a;
-      --line-hover: #374659;
-      --line-active: #3b82f6;
-
-      --text: #f3f6fa;
-      --text-muted: #8b97a7;
-      --text-dim: #546274;
-
-      --blue: #2264e6;
-      --blue-hover: #3377ff;
-      --blue-glow: rgba(34, 100, 230, 0.28);
-      --red: #c92a2a;
-      --red-hover: #e03131;
-      --green: #2fb36d;
-
-      --shadow-window: 0 25px 80px -15px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.04);
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --bg: #f5f5f5;
+      --panel: #ffffff;
+      --border: #222222;
+      --border-light: #cccccc;
+      
+      --text: #111111;
+      --text-muted: #555555;
+      
+      --accent: #003366;
+      --accent-hover: #002244;
+      --error: #cc0000;
+      
+      --font-main: 'Inter', Arial, sans-serif;
     }
 
     * {
@@ -42,8 +31,7 @@
       margin: 0;
       padding: 0;
       -webkit-font-smoothing: antialiased;
-      user-select: none;
-      -webkit-user-select: none;
+      border-radius: 0 !important; /* Уклањање свих заобљења */
     }
 
     html, body {
@@ -57,17 +45,13 @@
       overscroll-behavior: none;
       background: var(--bg);
       color: var(--text);
-      font-family: var(--font-sans);
+      font-family: var(--font-main);
     }
 
     body {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background:
-        radial-gradient(ellipse 65% 35% at 50% -10%, rgba(34, 100, 230, 0.16), transparent 70%),
-        radial-gradient(circle at 95% 95%, rgba(201, 42, 42, 0.05), transparent 40%),
-        var(--bg);
     }
 
     input, select {
@@ -75,35 +59,34 @@
       -webkit-user-select: auto;
     }
 
-    /* DRŽAVNA TROBOJNICA */
+    /* ДРЖАВНА ТРОБОЈКА */
     .top-line {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
-      height: 3px;
+      height: 4px;
       z-index: 1000;
       background: linear-gradient(
         90deg,
         #c92a2a 0% 33.33%,
         #1c4eb8 33.33% 66.66%,
-        #eef2f7 66.66% 100%
+        #ffffff 66.66% 100%
       );
+      border-bottom: 1px solid var(--border);
     }
 
     /* HEADER */
     .header {
-      height: 68px;
+      height: 70px;
       width: 100%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 24px;
       padding-top: max(4px, env(safe-area-inset-top));
-      border-bottom: 1px solid var(--line);
-      background: rgba(7, 10, 15, 0.82);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      background: var(--panel);
       flex-shrink: 0;
       z-index: 50;
     }
@@ -116,96 +99,77 @@
       text-decoration: none;
     }
 
-    /* LOGO.PNG SA FALLBACK-OM */
     .brand-logo-img {
-      height: 38px;
-      max-height: 42px;
+      height: 40px;
       width: auto;
       display: block;
       object-fit: contain;
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
     }
 
     .brand-mark {
-      width: 38px;
-      height: 38px;
-      border: 1px solid var(--line-hover);
-      border-radius: 9px;
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
       display: none;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, #182232, #0d131c);
+      background: var(--text);
       color: #fff;
-      font-weight: 900;
-      font-size: 15px;
-      letter-spacing: -0.5px;
+      font-weight: 700;
+      font-size: 18px;
     }
 
     .brand-text {
       display: flex;
       flex-direction: column;
-      gap: 1px;
     }
 
     .brand-name {
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: uppercase;
     }
 
     .brand-sub {
-      font-size: 9px;
-      color: var(--text-dim);
-      font-family: var(--font-mono);
-      letter-spacing: 0.12em;
+      font-size: 11px;
+      color: var(--text-muted);
       text-transform: uppercase;
     }
 
     .menu-btn {
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--line);
-      background: var(--panel-inner);
-      border-radius: 9px;
-      color: var(--text);
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      background: var(--panel);
       cursor: pointer;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 5px;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      gap: 6px;
+      transition: background 0.2s;
     }
 
     .menu-btn:hover {
-      border-color: var(--line-hover);
-      background: var(--panel-elevated);
-      transform: translateY(-1px);
-    }
-
-    .menu-btn:active {
-      transform: scale(0.95);
+      background: #f0f0f0;
     }
 
     .menu-btn span {
-      width: 18px;
+      width: 22px;
       height: 2px;
       background: var(--text);
-      transition: 0.2s;
     }
 
     /* DRAWER */
     .overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.72);
+      background: rgba(0, 0, 0, 0.6);
       opacity: 0;
       visibility: hidden;
-      transition: 0.25s ease;
+      transition: 0.2s ease;
       z-index: 80;
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
     }
 
     .overlay.active {
@@ -220,14 +184,13 @@
       height: 100%;
       width: min(340px, 86vw);
       background: var(--panel);
-      border-left: 1px solid var(--line);
+      border-left: 1px solid var(--border);
       z-index: 90;
       transform: translateX(100%);
-      transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: 0.3s ease;
       padding: 24px;
       display: flex;
       flex-direction: column;
-      box-shadow: -20px 0 60px rgba(0, 0, 0, 0.6);
     }
 
     .drawer.active {
@@ -238,452 +201,314 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 18px;
-      border-bottom: 1px solid var(--line);
-      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
     }
 
     .drawer-title {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      text-transform: uppercase;
     }
 
     .close-btn {
-      width: 34px;
-      height: 34px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel-inner);
-      color: #fff;
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
       font-size: 18px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: 0.2s;
     }
 
     .close-btn:hover {
-      border-color: var(--line-hover);
-      color: var(--red);
+      background: #f0f0f0;
     }
 
     .drawer-links {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
     }
 
     .drawer-link {
-      border: 1px solid var(--line);
-      padding: 14px 16px;
-      border-radius: 10px;
-      color: var(--text-muted);
+      border: 1px solid var(--border-light);
+      padding: 16px;
+      color: var(--text);
       text-decoration: none;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
+      font-size: 14px;
+      font-weight: 600;
       text-transform: uppercase;
-      font-family: var(--font-mono);
-      background: var(--panel-inner);
+      background: var(--panel);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: all 0.2s;
     }
 
     .drawer-link:hover {
-      color: #fff;
-      border-color: var(--line-active);
-      background: var(--panel-elevated);
-      transform: translateX(3px);
+      border-color: var(--border);
+      background: #fafafa;
     }
 
-    .drawer-link.ext {
-      color: var(--blue-hover);
-    }
-
-    /* GLAVNI PROSTOR */
+    /* ГЛАВНИ ПРОСТОР */
     main {
       flex: 1;
       width: 100%;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: 14px;
+      padding: 40px 16px;
       overflow-y: auto;
       touch-action: pan-y;
-      scrollbar-width: none;
-    }
-
-    main::-webkit-scrollbar {
-      display: none;
     }
 
     .app {
       width: min(640px, 100%);
-      margin: auto;
+      margin: 0 auto;
     }
 
-    /* PROZOR */
+    /* СЕКЦИЈЕ / ПРОЗОРИ */
     .window {
       display: none;
-      animation: winIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
     }
 
     .window.active {
       display: block;
     }
 
-    @keyframes winIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.985); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-
     .window-frame {
       background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      box-shadow: var(--shadow-window);
-      overflow: hidden;
+      border: 1px solid var(--border);
+      padding: 40px 32px;
     }
 
-    .window-top {
-      height: 48px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 18px;
-      border-bottom: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.015);
-    }
-
-    .window-dots {
-      display: flex;
-      gap: 7px;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #2a3544;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .window-code {
-      color: var(--text-dim);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-    }
-
-    .window-body {
-      padding: 30px 24px;
-    }
-
-    @media (min-width: 520px) {
-      .window-body {
-        padding: 38px 36px;
+    @media (max-width: 520px) {
+      .window-frame {
+        padding: 30px 20px;
       }
     }
 
-    /* HERO I LANDING */
+    /* ХЕРО СЕКЦИЈА */
     .hero {
       text-align: center;
     }
 
-    .hero-icon {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 20px;
-      border: 1px solid var(--line-hover);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at 30% 20%, rgba(34, 100, 230, 0.2), transparent 70%), var(--panel-inner);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 25px rgba(0, 0, 0, 0.35);
-    }
-
-    .hero-icon svg {
-      width: 28px;
-      height: 28px;
-      stroke: #d0e1fd;
-    }
-
     .eyebrow {
-      color: var(--blue-hover);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      margin-bottom: 10px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 12px;
       text-transform: uppercase;
     }
 
     h1 {
-      font-size: clamp(26px, 5.5vw, 36px);
-      line-height: 1.1;
-      letter-spacing: -0.04em;
-      font-weight: 900;
-      color: #fff;
-      margin-bottom: 12px;
+      font-size: clamp(24px, 5vw, 32px);
+      line-height: 1.2;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      text-transform: uppercase;
     }
 
     .hero p {
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 15px;
       line-height: 1.6;
       max-width: 480px;
-      margin: 0 auto 26px;
+      margin: 0 auto 32px;
     }
 
-    /* DUGMAD */
+    /* ДУГМАД */
     .primary-btn {
       width: 100%;
-      height: 52px;
-      border: 1px solid var(--blue);
-      border-radius: 10px;
-      background: linear-gradient(180deg, #2a72ff 0%, #1c5cdb 100%);
+      height: 54px;
+      border: 2px solid var(--border);
+      background: var(--accent);
       color: #fff;
-      font-family: var(--font-sans);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
+      font-family: var(--font-main);
+      font-size: 14px;
+      font-weight: 700;
       text-transform: uppercase;
       cursor: pointer;
-      box-shadow: 0 8px 24px var(--blue-glow), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      transition: background 0.2s;
     }
 
     .primary-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(34, 100, 230, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-      filter: brightness(1.06);
-    }
-
-    .primary-btn:active:not(:disabled) {
-      transform: translateY(1px) scale(0.985);
+      background: var(--accent-hover);
     }
 
     .primary-btn:disabled {
-      background: #17202c;
-      border-color: var(--line);
-      color: var(--text-dim);
-      box-shadow: none;
+      background: #e0e0e0;
+      border-color: var(--border-light);
+      color: #999;
       cursor: not-allowed;
-      opacity: 0.55;
     }
 
     .secondary-btn {
-      height: 52px;
-      padding: 0 20px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--panel-inner);
-      color: var(--text-muted);
-      font-family: var(--font-sans);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      height: 54px;
+      padding: 0 24px;
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      font-family: var(--font-main);
+      font-size: 13px;
+      font-weight: 600;
       text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      transition: background 0.2s;
     }
 
     .secondary-btn:hover {
-      border-color: var(--line-hover);
-      background: var(--panel-elevated);
-      color: #fff;
-      transform: translateY(-1px);
-    }
-
-    .secondary-btn:active {
-      transform: scale(0.98);
+      background: #f0f0f0;
     }
 
     .btn-row {
       display: flex;
-      gap: 10px;
-      margin-top: 24px;
+      gap: 12px;
+      margin-top: 32px;
     }
 
-    .btn-hero-red {
-      background: linear-gradient(180deg, #d63031 0%, #b71c1c 100%);
-      border-color: #d63031;
-      box-shadow: 0 8px 24px rgba(214, 48, 49, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-hero-red:hover:not(:disabled) {
-      box-shadow: 0 12px 30px rgba(214, 48, 49, 0.45);
-      filter: brightness(1.08);
-    }
-
-    /* FORMA */
+    /* ФОРМА И ЗАГЛАВЉА */
     .section-head {
-      margin-bottom: 24px;
+      margin-bottom: 32px;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 16px;
     }
 
     .step-tag {
-      font-family: var(--font-mono);
-      color: var(--blue-hover);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      margin-bottom: 6px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 8px;
       text-transform: uppercase;
     }
 
     .section-head h2 {
-      font-size: 22px;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #fff;
-      margin-bottom: 6px;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
     }
 
     .section-head p {
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 14px;
       line-height: 1.5;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .label-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     label {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--text-muted);
-      letter-spacing: 0.06em;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
       text-transform: uppercase;
-      font-family: var(--font-mono);
     }
 
     .counter {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-dim);
+      font-size: 12px;
+      color: var(--text-muted);
     }
 
     input, select {
       width: 100%;
-      height: 48px;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      background: var(--panel-inner);
-      color: #fff;
+      height: 52px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
       outline: none;
-      padding: 0 14px;
-      font-family: var(--font-sans);
-      font-size: 14px;
-      transition: all 0.2s ease;
+      padding: 0 16px;
+      font-family: var(--font-main);
+      font-size: 15px;
+      transition: border-color 0.2s;
     }
 
     input:focus, select:focus {
-      border-color: var(--line-active);
-      box-shadow: 0 0 0 3px rgba(40, 120, 255, 0.12);
-      background: #090e17;
-    }
-
-    input.mono {
-      font-family: var(--font-mono);
-      font-size: 15px;
-      letter-spacing: 2px;
+      border: 2px solid var(--accent);
+      padding: 0 15px; /* компензација за дебљи бордер */
     }
 
     select {
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%238b97a7' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23000000' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 14px center;
+      background-position: right 16px center;
       cursor: pointer;
     }
 
-    select option {
-      background: #111722;
-      color: #fff;
-    }
-
     .input-error {
-      color: #ff6d6d;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      margin-top: 6px;
+      color: var(--error);
+      font-size: 12px;
+      margin-top: 8px;
       display: none;
+      font-weight: 600;
     }
 
     .input-error.show {
       display: block;
     }
 
-    /* KARTICA NA LISTIĆU (KORAK 2) */
+    /* ГЛАСАЧКИ ЛИСТИЋ */
     .ballot-item {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 16px 18px;
+      border: 1px solid var(--border);
+      padding: 20px;
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 20px;
       cursor: pointer;
-      background: var(--panel-inner);
-      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      background: #fff;
+      transition: background 0.2s, border-color 0.2s;
     }
 
     .ballot-item:hover {
-      border-color: var(--line-hover);
-      background: #0e141f;
-      transform: translateY(-2px);
+      background: #f9f9f9;
     }
 
     .ballot-item.selected {
-      border-color: var(--blue);
-      background: linear-gradient(90deg, rgba(34, 100, 230, 0.14), rgba(34, 100, 230, 0.03)), var(--panel-inner);
-      box-shadow: 0 0 0 1px var(--blue), 0 12px 30px rgba(0, 0, 0, 0.35);
+      border: 2px solid var(--accent);
+      background: #f0f4f8;
+      padding: 19px; /* компензација бордера */
     }
 
     .ballot-num {
-      width: 42px;
-      height: 42px;
-      border: 1px solid var(--line);
-      border-radius: 9px;
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 14px;
+      color: var(--text);
+      font-size: 18px;
       font-weight: 700;
-      background: var(--panel);
+      background: #fff;
       flex-shrink: 0;
-      transition: all 0.2s;
     }
 
     .ballot-item.selected .ballot-num {
-      border-color: var(--blue);
-      background: var(--blue);
+      background: var(--accent);
       color: #fff;
+      border-color: var(--accent);
     }
 
     .ballot-info {
@@ -691,61 +516,57 @@
     }
 
     .ballot-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 3px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
     }
 
     .ballot-sub {
-      font-size: 12px;
+      font-size: 14px;
       color: var(--text-muted);
     }
 
     .ballot-check {
-      width: 22px;
-      height: 22px;
-      border: 1px solid var(--line-hover);
-      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border-light);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: all 0.2s;
+      background: #fff;
     }
 
     .ballot-item.selected .ballot-check {
-      border-color: var(--blue);
-      background: var(--blue);
+      border-color: var(--accent);
+      background: var(--accent);
     }
 
     .ballot-check svg {
-      width: 12px;
-      height: 12px;
+      width: 16px;
+      height: 16px;
       stroke: #fff;
       opacity: 0;
-      transition: opacity 0.15s;
     }
 
     .ballot-item.selected .ballot-check svg {
       opacity: 1;
     }
 
-    /* REZIME / POTVRDA / ŠTAMPA */
+    /* РЕЗИМЕ / ТАБЕЛЕ */
     .summary-box {
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
     }
 
     .summary-row {
       display: flex;
       justify-content: space-between;
       gap: 16px;
-      padding: 13px 16px;
-      border-bottom: 1px solid var(--line);
-      background: var(--panel-inner);
+      padding: 16px;
+      border-bottom: 1px solid var(--border-light);
+      background: #fff;
     }
 
     .summary-row:last-child {
@@ -753,68 +574,44 @@
     }
 
     .summary-label {
-      color: var(--text-dim);
-      font-size: 11px;
-      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-size: 13px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     .summary-value {
-      color: #fff;
-      font-size: 12px;
+      color: var(--text);
+      font-size: 14px;
       font-weight: 700;
       text-align: right;
       word-break: break-word;
     }
 
-    .summary-value.mono {
-      font-family: var(--font-mono);
-      color: var(--blue-hover);
-    }
-
     .info-callout {
-      padding: 13px 15px;
-      border: 1px solid rgba(40, 120, 255, 0.2);
-      background: rgba(40, 120, 255, 0.06);
-      border-radius: 9px;
-      color: #9ab9e6;
-      font-size: 11px;
+      padding: 16px;
+      border: 1px solid var(--border);
+      background: #f9f9f9;
+      color: var(--text);
+      font-size: 13px;
       line-height: 1.5;
-      margin-bottom: 18px;
+      margin-bottom: 24px;
+      font-weight: 600;
     }
 
-    /* RECEIPT */
+    /* ПРИКАЗ ПОТВРДЕ */
     .receipt-center {
       text-align: center;
+      padding: 20px 0 30px 0;
     }
 
-    .success-badge {
-      width: 62px;
-      height: 62px;
-      margin: 4px auto 18px;
-      border: 1px solid rgba(47, 179, 109, 0.45);
-      background: rgba(47, 179, 109, 0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: pulseGlow 2.2s infinite;
+    .success-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      color: var(--text);
     }
 
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(47, 179, 109, 0.2); }
-      50% { box-shadow: 0 0 0 10px rgba(47, 179, 109, 0); }
-    }
-
-    .success-badge svg {
-      width: 26px;
-      height: 26px;
-      stroke: var(--green);
-    }
-
-    /* OBRADA OVERLAY */
+    /* МОДАЛ ЗА ОБРАДУ ПОДАТАКА (УПРОШЋЕНО) */
     .processing-modal {
       position: fixed;
       inset: 0;
@@ -823,9 +620,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(5, 7, 11, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.9);
     }
 
     .processing-modal.active {
@@ -833,81 +628,48 @@
     }
 
     .proc-card {
-      width: min(460px, 100%);
-      border: 1px solid var(--line-hover);
-      border-radius: 14px;
+      width: min(400px, 100%);
+      border: 2px solid var(--border);
       background: var(--panel);
-      box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
-      padding: 26px;
-      animation: winIn 0.3s ease;
-    }
-
-    .proc-tag {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 700;
-      color: var(--blue-hover);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      display: block;
-      margin-bottom: 6px;
+      padding: 32px;
+      text-align: center;
     }
 
     .proc-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 4px;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+      text-transform: uppercase;
     }
 
     .proc-sub {
       color: var(--text-muted);
-      font-size: 12px;
-      margin-bottom: 18px;
+      font-size: 14px;
+      margin-bottom: 24px;
+      min-height: 21px;
     }
 
     .proc-bar-bg {
       width: 100%;
-      height: 4px;
-      background: #192230;
-      border-radius: 8px;
+      height: 6px;
+      background: var(--border-light);
       overflow: hidden;
-      margin-bottom: 16px;
     }
 
     .proc-bar-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #2264e6, #5992ff);
-      transition: width 0.22s linear;
+      background: var(--accent);
+      transition: width 0.3s linear;
     }
 
-    .proc-terminal {
-      background: var(--panel-inner);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      line-height: 1.8;
-      color: var(--text-dim);
-      min-height: 90px;
-    }
-
-    .log-line.active {
-      color: #d2deec;
-    }
-
-    .log-line.done {
-      color: var(--green);
-    }
-
-    /* FOOTER */
+    /* ФУТЕР */
     .site-footer {
-      background: rgba(7, 10, 15, 0.9);
-      border-top: 1px solid var(--line);
-      padding: 12px 20px;
-      padding-bottom: max(12px, env(safe-area-inset-bottom));
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      padding: 20px;
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
       flex-shrink: 0;
       z-index: 50;
     }
@@ -918,13 +680,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 7px;
+      gap: 12px;
     }
 
     .footer-nav {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 16px;
       flex-wrap: wrap;
       justify-content: center;
     }
@@ -934,38 +696,27 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-family: var(--font-mono);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
       text-decoration: none;
       cursor: pointer;
-      padding: 2px 4px;
-      transition: color 0.18s ease, transform 0.18s ease;
     }
 
     .footer-nav a:hover,
     .footer-nav button:hover {
-      color: #fff;
-      transform: translateY(-1px);
+      color: var(--text);
     }
 
     .footer-nav .nav-sep {
-      color: var(--line-hover);
-      font-size: 11px;
+      color: var(--border-light);
+      font-size: 12px;
       user-select: none;
     }
 
-    .footer-nav .ext {
-      color: var(--blue-hover);
-    }
-
     .footer-meta {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-dim);
-      letter-spacing: 0.08em;
+      font-size: 11px;
+      color: var(--text-muted);
       text-align: center;
       text-transform: uppercase;
     }
@@ -974,6 +725,7 @@
       display: none;
     }
 
+    /* ШТАМПА */
     @media print {
       html, body {
         overflow: visible !important;
@@ -981,18 +733,15 @@
         background: #fff !important;
         color: #000 !important;
       }
-      .top-line, .header, .site-footer, .btn-row, .primary-btn, .secondary-btn, .drawer, .overlay, .processing-modal {
+      .top-line, .header, .site-footer, .btn-row, .drawer, .overlay, .processing-modal {
         display: none !important;
       }
       main {
-        width: 100% !important;
-        margin: 0 !important;
         padding: 0 !important;
       }
       .window-frame {
         border: none !important;
-        box-shadow: none !important;
-        background: transparent !important;
+        padding: 0 !important;
       }
       .window {
         display: none !important;
@@ -1003,30 +752,28 @@
       .print-only {
         display: block !important;
         border-bottom: 2px solid #000;
-        padding-bottom: 12px;
-        margin-bottom: 24px;
+        padding-bottom: 16px;
+        margin-bottom: 32px;
       }
       .print-only h1 {
-        font-size: 16pt;
-        font-weight: 900;
+        font-size: 20px;
+        font-weight: 700;
         text-transform: uppercase;
         color: #000;
+        margin-bottom: 8px;
       }
       .print-only p {
-        font-size: 9pt;
-        color: #555;
+        font-size: 12px;
+        color: #000;
       }
       .summary-box {
         border: 1px solid #000 !important;
       }
       .summary-row {
-        background: transparent !important;
         border-bottom: 1px solid #000 !important;
       }
       .summary-label {
-        color: #333 !important;
-        background: #f0f0f0 !important;
-        padding-right: 8px;
+        color: #000 !important;
       }
       .summary-value {
         color: #000 !important;
@@ -1034,27 +781,28 @@
       .print-signatures {
         display: flex !important;
         justify-content: space-between;
-        margin-top: 50px;
+        margin-top: 80px;
       }
       .sign-box {
         border-top: 1px solid #000;
-        width: 190px;
+        width: 200px;
         text-align: center;
-        font-size: 8pt;
-        padding-top: 6px;
+        font-size: 12px;
+        padding-top: 8px;
+        text-transform: uppercase;
       }
     }
   </style>
 </head>
 <body>
 
-  <!-- TROBOJNICA -->
+  <!-- ДРЖАВНА ТРОБОЈКА -->
   <div class="top-line"></div>
 
   <!-- HEADER -->
   <header class="header">
     <div class="brand" onclick="showWindow('win-landing')">
-      <!-- SLIKA LOGOA logo.png -->
+      <!-- СЛИКА ЛОГОА logo.png -->
       <img src="logo.png" alt="МОБА" class="brand-logo-img" onerror="this.style.display='none'; document.getElementById('altBrandMark').style.display='flex';">
       <div class="brand-mark" id="altBrandMark">М</div>
       
@@ -1071,11 +819,11 @@
     </button>
   </header>
 
-  <!-- BOČNI MENI (DRAWER) -->
+  <!-- БОЧНИ МЕНИ -->
   <div class="overlay" id="overlay" onclick="toggleDrawer(false)"></div>
   <aside class="drawer" id="drawer">
     <div class="drawer-head">
-      <span class="drawer-title">СИСТЕМСКИ МЕНИ</span>
+      <span class="drawer-title">Навигација</span>
       <button class="close-btn" type="button" onclick="toggleDrawer(false)">✕</button>
     </div>
     <nav class="drawer-links">
@@ -1085,333 +833,262 @@
       <a href="#" class="drawer-link" onclick="showWindow('win-security'); toggleDrawer(false); return false;">
         Сигурност и протокол <span>→</span>
       </a>
-      <a href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer" class="drawer-link ext">
+      <a href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer" class="drawer-link">
         Званични сајт ↗
       </a>
     </nav>
   </aside>
 
-  <!-- GLAVNI APLEKS -->
+  <!-- ГЛАВНИ САДРЖАЈ -->
   <main>
     <div class="app">
 
-      <!-- 0. LANDING -->
+      <!-- 0. ПОЧЕТНА -->
       <section class="window active" id="win-landing">
         <div class="window-frame">
-          <div class="window-top">
-            <div class="window-dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <div class="window-code">PORTAL // INITIAL</div>
-          </div>
-          <div class="window-body">
-            <div class="hero">
-              <div class="hero-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7">
-                  <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5z"/>
-                  <path d="M8 7h8M8 11h8M8 15h4"/>
-                </svg>
-              </div>
-              <div class="eyebrow">Службени портал</div>
-              <h1>Гласачки портал</h1>
-              <p>Званични регистар Покрета МОБА за безбедно и транспарентно спровођење изборног процеса.</p>
-              <button class="primary-btn btn-hero-red" type="button" onclick="showWindow('win-form')">
-                ГЛАСАЈ
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SIGURNOST & INFORMACIJE -->
-      <section class="window" id="win-security">
-        <div class="window-frame">
-          <div class="window-top">
-            <div class="window-dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <div class="window-code">SEC // PROTOCOL</div>
-          </div>
-          <div class="window-body">
-            <div class="section-head">
-              <div class="step-tag">Информације</div>
-              <h2>Сигурност и заштита</h2>
-              <p>Протокол криптографске заштите идентитета бирача и интегритета изборних података.</p>
-            </div>
-
-            <div class="summary-box">
-              <div class="summary-row">
-                <span class="summary-label">01. Тајност гласа</span>
-                <span class="summary-value">Идентитет се неповратно одваја од листића</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">02. Заштита записа</span>
-                <span class="summary-value">Криптографски SHA-256 ланац</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">03. Верификација</span>
-                <span class="summary-value">Дигитална потврда са печатом</span>
-              </div>
-            </div>
-
-            <button class="secondary-btn" type="button" onclick="showWindow('win-landing')">
-              ← Назад
+          <div class="hero">
+            <div class="eyebrow">Службени портал</div>
+            <h1>Гласачки портал</h1>
+            <p>Званични регистар Покрета МОБА за безбедно и транспарентно спровођење изборног процеса.</p>
+            <button class="primary-btn" type="button" onclick="showWindow('win-form')">
+              Приступи гласању
             </button>
           </div>
         </div>
       </section>
 
-      <!-- KORAK 1: PRISTUPNICA -->
+      <!-- СИГУРНОСТ & ИНФОРМАЦИЈЕ -->
+      <section class="window" id="win-security">
+        <div class="window-frame">
+          <div class="section-head">
+            <div class="step-tag">Информације</div>
+            <h2>Сигурност и заштита</h2>
+            <p>Протокол заштите идентитета бирача и интегритета изборних података.</p>
+          </div>
+
+          <div class="summary-box">
+            <div class="summary-row">
+              <span class="summary-label">01. Тајност гласа</span>
+              <span class="summary-value">Идентитет се одваја од листића</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">02. Заштита записа</span>
+              <span class="summary-value">Стандардни криптографски ланац</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">03. Верификација</span>
+              <span class="summary-value">Званична дигитална потврда</span>
+            </div>
+          </div>
+
+          <button class="secondary-btn" type="button" onclick="showWindow('win-landing')">
+            ← Назад на почетну
+          </button>
+        </div>
+      </section>
+
+      <!-- КОРАК 1: ПРИСТУПНИЦА -->
       <section class="window" id="win-form">
         <div class="window-frame">
-          <div class="window-top">
-            <div class="window-dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <div class="window-code">STEP 01 / 03</div>
+          <div class="section-head">
+            <div class="step-tag">Корак 01 од 03</div>
+            <h2>Приступница</h2>
+            <p>Унесите податке за проверу бирачког права у регистру.</p>
           </div>
-          <div class="window-body">
-            <div class="section-head">
-              <div class="step-tag">Корак 01 / 03</div>
-              <h2>Приступница</h2>
-              <p>Унесите податке за проверу бирачког права у регистру.</p>
+
+          <form id="voteForm" onsubmit="event.preventDefault(); startVerification();">
+            <div class="form-group">
+              <div class="label-row">
+                <label for="fullName">Име и презиме</label>
+              </div>
+              <input type="text" id="fullName" placeholder="нпр. Милица Петровић" autocomplete="name" required>
             </div>
 
-            <form id="voteForm" onsubmit="event.preventDefault(); startVerification();">
-              <div class="form-group">
-                <div class="label-row">
-                  <label for="fullName">Име и презиме</label>
-                </div>
-                <input type="text" id="fullName" placeholder="нпр. Милица Петровић" autocomplete="name" required>
+            <div class="form-group">
+              <div class="label-row">
+                <label for="city">Град</label>
               </div>
+              <select id="city" required>
+                <option value="" disabled selected>Изаберите град са списка</option>
+                <option value="Београд">Београд</option>
+                <option value="Нови Сад">Нови Сад</option>
+                <option value="Ниш">Ниш</option>
+                <option value="Крагујевац">Крагујевац</option>
+                <option value="Суботица">Суботица</option>
+                <option value="Зрењанин">Зрењанин</option>
+                <option value="Панчево">Панчево</option>
+                <option value="Чачак">Чачак</option>
+                <option value="Крушевац">Крушевац</option>
+                <option value="Краљево">Краљево</option>
+                <option value="Нови Пазар">Нови Пазар</option>
+                <option value="Смедерево">Смедерево</option>
+                <option value="Лесковац">Лесковац</option>
+                <option value="Ужице">Ужице</option>
+                <option value="Ваљево">Ваљево</option>
+                <option value="Врање">Врање</option>
+                <option value="Шабац">Шабац</option>
+                <option value="Сомбор">Сомбор</option>
+                <option value="Пожаревац">Пожаревац</option>
+                <option value="Пирот">Пирот</option>
+                <option value="Зајечар">Зајечар</option>
+                <option value="Кикинда">Кикинда</option>
+                <option value="Сремска Митровица">Сремска Митровица</option>
+                <option value="Јагодина">Јагодина</option>
+                <option value="Вршац">Вршац</option>
+                <option value="Бор">Бор</option>
+                <option value="Прокупље">Прокупље</option>
+                <option value="Лозница">Лозница</option>
+              </select>
+            </div>
 
-              <div class="form-group">
-                <div class="label-row">
-                  <label for="city">Град</label>
-                </div>
-                <select id="city" required>
-                  <option value="" disabled selected>Изаберите град са списка</option>
-                  <option value="Београд">Београд</option>
-                  <option value="Нови Сад">Нови Сад</option>
-                  <option value="Ниш">Ниш</option>
-                  <option value="Крагујевац">Крагујевац</option>
-                  <option value="Суботица">Суботица</option>
-                  <option value="Зрењанин">Зрењанин</option>
-                  <option value="Панчево">Панчево</option>
-                  <option value="Чачак">Чачак</option>
-                  <option value="Крушевац">Крушевац</option>
-                  <option value="Краљево">Краљево</option>
-                  <option value="Нови Пазар">Нови Пазар</option>
-                  <option value="Смедерево">Смедерево</option>
-                  <option value="Лесковац">Лесковац</option>
-                  <option value="Ужице">Ужице</option>
-                  <option value="Ваљево">Ваљево</option>
-                  <option value="Врање">Врање</option>
-                  <option value="Шабац">Шабац</option>
-                  <option value="Сомбор">Сомбор</option>
-                  <option value="Пожаревац">Пожаревац</option>
-                  <option value="Пирот">Пирот</option>
-                  <option value="Зајечар">Зајечар</option>
-                  <option value="Кикинда">Кикинда</option>
-                  <option value="Сремска Митровица">Сремска Митровица</option>
-                  <option value="Јагодина">Јагодина</option>
-                  <option value="Вршац">Вршац</option>
-                  <option value="Бор">Бор</option>
-                  <option value="Прокупље">Прокупље</option>
-                  <option value="Лозница">Лозница</option>
-                </select>
+            <div class="form-group">
+              <div class="label-row">
+                <label for="idCard">Број личне карте</label>
+                <span class="counter" id="idCounter">0/9</span>
               </div>
+              <input type="tel" id="idCard" placeholder="Унесите 9 цифара" maxlength="9" inputmode="numeric" required>
+              <div class="input-error" id="idError">Број личне карте мора садржати тачно 9 цифара.</div>
+            </div>
 
-              <div class="form-group">
-                <div class="label-row">
-                  <label for="idCard">Број личне карте</label>
-                  <span class="counter" id="idCounter">0/9</span>
-                </div>
-                <input type="tel" id="idCard" class="mono" placeholder="000000000" maxlength="9" inputmode="numeric" required>
-                <div class="input-error" id="idError">Број личне карте мора садржати тачно 9 цифара.</div>
-              </div>
-
-              <div class="btn-row">
-                <button class="secondary-btn" type="button" onclick="showWindow('win-landing')">
-                  ← Назад
-                </button>
-                <button class="primary-btn" type="submit" id="btnToBallot" disabled>
-                  Следећи корак →
-                </button>
-              </div>
-            </form>
-          </div>
+            <div class="btn-row">
+              <button class="secondary-btn" type="button" onclick="showWindow('win-landing')">
+                ← Одустани
+              </button>
+              <button class="primary-btn" type="submit" id="btnToBallot" disabled>
+                Настави даље →
+              </button>
+            </div>
+          </form>
         </div>
       </section>
 
-      <!-- KORAK 2: GLASAČKI LISTIĆ (AŽURIRAN PREMA ZAHTEVU KLIJENTA) -->
+      <!-- КОРАК 2: ГЛАСАЧКИ ЛИСТИЋ -->
       <section class="window" id="win-ballot">
         <div class="window-frame">
-          <div class="window-top">
-            <div class="window-dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <div class="window-code">STEP 02 / 03</div>
+          <div class="section-head">
+            <div class="step-tag">Корак 02 од 03</div>
+            <h2>Гласачки листић</h2>
+            <p>Означите изборну листу за коју дајете глас.</p>
           </div>
-          <div class="window-body">
-            <div class="section-head">
-              <div class="step-tag">Корак 02 / 03</div>
-              <h2>Гласачки листић</h2>
-              <p>Означите изборну листу за коју дајете глас.</p>
-            </div>
 
-            <!-- OPGIJA ZA STUDENTE: Студентска листа / Студенти побеђују -->
-            <div class="ballot-item" id="candidateCard" onclick="selectCandidate()">
-              <div class="ballot-num">1</div>
-              <div class="ballot-info">
-                <div class="ballot-title">Студентска листа</div>
-                <div class="ballot-sub">Студенти побеђују</div>
-              </div>
-              <div class="ballot-check">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="3">
-                  <path d="m5 12 4 4L19 6"/>
-                </svg>
-              </div>
+          <div class="ballot-item" id="candidateCard" onclick="selectCandidate()">
+            <div class="ballot-num">1</div>
+            <div class="ballot-info">
+              <div class="ballot-title">Студентска листа</div>
+              <div class="ballot-sub">Студенти побеђују</div>
             </div>
+            <div class="ballot-check">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="3">
+                <path d="m5 12 4 4L19 6"/>
+              </svg>
+            </div>
+          </div>
 
-            <div class="btn-row">
-              <button class="secondary-btn" type="button" onclick="showWindow('win-form')">
-                ← Назад
-              </button>
-              <button class="primary-btn" type="button" id="btnToConfirm" disabled onclick="prepareConfirmation()">
-                Прегледај избор →
-              </button>
-            </div>
+          <div class="btn-row">
+            <button class="secondary-btn" type="button" onclick="showWindow('win-form')">
+              ← Назад
+            </button>
+            <button class="primary-btn" type="button" id="btnToConfirm" disabled onclick="prepareConfirmation()">
+              Прегледај избор →
+            </button>
           </div>
         </div>
       </section>
 
-      <!-- KORAK 3: PROVERA IZBORA -->
+      <!-- КОРАК 3: ПРОВЕРА ИЗБОРА -->
       <section class="window" id="win-confirm">
         <div class="window-frame">
-          <div class="window-top">
-            <div class="window-dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <div class="window-code">STEP 03 / 03</div>
+          <div class="section-head">
+            <div class="step-tag">Корак 03 од 03</div>
+            <h2>Провера избора</h2>
+            <p>Проверите податке пре трајног уписа у систем.</p>
           </div>
-          <div class="window-body">
-            <div class="section-head">
-              <div class="step-tag">Корак 03 / 03</div>
-              <h2>Провера избора</h2>
-              <p>Пажљиво проверите податке пре трајног криптографског уписа.</p>
-            </div>
 
-            <div class="summary-box">
-              <div class="summary-row">
-                <span class="summary-label">Бирач</span>
-                <span class="summary-value" id="confName">--</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Град</span>
-                <span class="summary-value" id="confCity">--</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Лична карта</span>
-                <span class="summary-value mono" id="confId">--</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Избор</span>
-                <span class="summary-value" style="color: var(--blue-hover);" id="confChoice">Студентска листа (Студенти побеђују)</span>
-              </div>
+          <div class="summary-box">
+            <div class="summary-row">
+              <span class="summary-label">Име и презиме</span>
+              <span class="summary-value" id="confName">--</span>
             </div>
+            <div class="summary-row">
+              <span class="summary-label">Град</span>
+              <span class="summary-value" id="confCity">--</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Број личне карте</span>
+              <span class="summary-value" id="confId">--</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Ваш избор</span>
+              <span class="summary-value" id="confChoice">Студентска листа (Студенти побеђују)</span>
+            </div>
+          </div>
 
-            <div class="info-callout">
-              Након потврде, глас се запечаћује у регистар и више се не може мењати.
-            </div>
+          <div class="info-callout">
+            Напомена: Након коначне потврде, глас се заводи у регистар и подаци се више не могу мењати.
+          </div>
 
-            <div class="btn-row">
-              <button class="secondary-btn" type="button" onclick="showWindow('win-ballot')">
-                ← Измени
-              </button>
-              <button class="primary-btn" type="button" onclick="startSealing()">
-                ПОТВРДИ ГЛАС ✓
-              </button>
-            </div>
+          <div class="btn-row">
+            <button class="secondary-btn" type="button" onclick="showWindow('win-ballot')">
+              ← Измени
+            </button>
+            <button class="primary-btn" type="button" onclick="startSealing()">
+              Потврди глас
+            </button>
           </div>
         </div>
       </section>
 
-      <!-- KORAK 4: POTVRDA (RECEIPT) -->
+      <!-- КОРАК 4: ПОТВРДА (RECEIPT) -->
       <section class="window" id="win-receipt">
         <div class="window-frame">
-          <div class="window-top">
-            <div class="window-dots">
-              <span class="dot"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <div class="window-code">SEALED // VERIFIED</div>
+          <div class="print-only">
+            <h1>Покрет МОБА — Потврда гласања</h1>
+            <p>Централни изборни регистар • Документ генерисан електронским путем</p>
           </div>
-          <div class="window-body">
-            <div class="print-only">
-              <h1>Покрет МОБА — Званична потврда гласања</h1>
-              <p>Централни изборни регистар • Документ генерисан електронским путем</p>
-            </div>
 
-            <div class="receipt-center">
-              <div class="success-badge">
-                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5">
-                  <path d="m5 12 4 4L19 6"/>
-                </svg>
-              </div>
-              <h2>Гласање је успешно обављено</h2>
-              <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 22px;">
-                Ваш глас је трајно и безбедно уписан у изборни протокол.
-              </p>
-            </div>
+          <div class="receipt-center">
+            <div class="success-icon">✓</div>
+            <h2>Гласање је успешно обављено</h2>
+            <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">
+              Ваш глас је трајно уписан у изборни протокол.
+            </p>
+          </div>
 
-            <div class="summary-box">
-              <div class="summary-row">
-                <span class="summary-label">Бирач</span>
-                <span class="summary-value" id="rcptName">--</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Град</span>
-                <span class="summary-value" id="rcptCity">--</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Лична карта</span>
-                <span class="summary-value mono" id="rcptId">--</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Време уписа</span>
-                <span class="summary-value" id="rcptTime">--</span>
-              </div>
-              <div class="summary-row">
-                <span class="summary-label">Одабрана листа</span>
-                <span class="summary-value" style="color: var(--blue-hover); font-weight: 800;">Студентска листа (Студенти побеђују)</span>
-              </div>
+          <div class="summary-box">
+            <div class="summary-row">
+              <span class="summary-label">Бирач</span>
+              <span class="summary-value" id="rcptName">--</span>
             </div>
+            <div class="summary-row">
+              <span class="summary-label">Град</span>
+              <span class="summary-value" id="rcptCity">--</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Лична карта</span>
+              <span class="summary-value" id="rcptId">--</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Време уписа</span>
+              <span class="summary-value" id="rcptTime">--</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">Одабрана листа</span>
+              <span class="summary-value">Студентска листа (Студенти побеђују)</span>
+            </div>
+          </div>
 
-            <div class="print-signatures print-only">
-              <div class="sign-box">Печат бирачког одбора</div>
-              <div class="sign-box">Потпис бирача</div>
-            </div>
+          <div class="print-signatures print-only">
+            <div class="sign-box">М.П. бирачког одбора</div>
+            <div class="sign-box">Потпис бирача</div>
+          </div>
 
-            <div class="btn-row">
-              <button class="secondary-btn" type="button" onclick="resetPortal()">
-                Почетна
-              </button>
-              <button class="primary-btn" type="button" onclick="window.print()">
-                ШТАМПАЈ ПОТВРДУ ⎙
-              </button>
-            </div>
+          <div class="btn-row">
+            <button class="secondary-btn" type="button" onclick="resetPortal()">
+              Почетна страна
+            </button>
+            <button class="primary-btn" type="button" onclick="window.print()">
+              Штампај потврду
+            </button>
           </div>
         </div>
       </section>
@@ -1419,33 +1096,29 @@
     </div>
   </main>
 
-  <!-- OVERLAY ZA OBRADU I PEČAĆENJE -->
+  <!-- МОДАЛ ЗА ОБРАДУ -->
   <div class="processing-modal" id="procModal">
     <div class="proc-card">
-      <span class="proc-tag" id="procTag">[ СИСТЕМСКА ОБРАДА ]</span>
-      <div class="proc-title" id="procTitle">Верификација у току</div>
-      <div class="proc-sub" id="procSub">Молимо сачекајте тренутак...</div>
+      <div class="proc-title" id="procTitle">Обрада у току</div>
+      <div class="proc-sub" id="procSub">Молимо сачекајте...</div>
       <div class="proc-bar-bg">
         <div class="proc-bar-fill" id="procBar"></div>
-      </div>
-      <div class="proc-terminal" id="procLog">
-        <div class="log-line active">> Покретање модула...</div>
       </div>
     </div>
   </div>
 
-  <!-- MINIMALISTIČKI FOOTER -->
+  <!-- ФУТЕР -->
   <footer class="site-footer">
     <div class="footer-wrap">
       <nav class="footer-nav">
         <button type="button" onclick="showWindow('win-landing')">Почетна</button>
-        <span class="nav-sep">/</span>
+        <span class="nav-sep">|</span>
         <button type="button" onclick="showWindow('win-security')">Сигурност</button>
-        <span class="nav-sep">/</span>
-        <a class="ext" href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer">Званични сајт ↗</a>
+        <span class="nav-sep">|</span>
+        <a href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer">Званични сајт</a>
       </nav>
       <div class="footer-meta">
-        © 2026 ПОКРЕТ МОБА. СВА ПРАВА ЗАДРЖАНА. // СИСТЕМ ЗА ЕЛЕКТРОНСКО ГЛАСАЊЕ v2.1
+        © 2026 ПОКРЕТ МОБА. СВА ПРАВА ЗАДРЖАНА.
       </div>
     </div>
   </footer>
@@ -1461,7 +1134,7 @@
 
     let hasSelected = false;
 
-    // SPREČAVANJE PULL-TO-REFRESH I OVERSCROLL BOUNCE-A
+    // Спречавање pull-to-refresh на мобилним
     document.addEventListener('touchmove', function(e) {
       if (!e.target.closest('main')) {
         e.preventDefault();
@@ -1478,7 +1151,7 @@
       if (e.key === "Escape") toggleDrawer(false);
     });
 
-    // NAVIGACIJA KROZ PROZORE
+    // НАВИГАЦИЈА КРОЗ ПРОЗОРЕ
     function showWindow(winId) {
       document.querySelectorAll(".window").forEach(w => w.classList.remove("active"));
       const target = document.getElementById(winId);
@@ -1489,7 +1162,7 @@
       }
     }
 
-    // VALIDACIJA FORME
+    // ВАЛИДАЦИЈА ФОРМЕ
     const fullNameInput = document.getElementById("fullName");
     const citySelect = document.getElementById("city");
     const idInput = document.getElementById("idCard");
@@ -1522,19 +1195,48 @@
       return id.slice(0, 3) + "***" + id.slice(6);
     }
 
+    // ЛОГИКА ЗА ПРИКАЗ ПРОГРЕСА БЕЗ "HACKER" ТЕРМИНАЛА
+    function runProcessingModal(title, steps, onComplete) {
+      const modal = document.getElementById("procModal");
+      const pTitle = document.getElementById("procTitle");
+      const pSub = document.getElementById("procSub");
+      const pBar = document.getElementById("procBar");
+
+      pTitle.textContent = title;
+      pBar.style.width = "0%";
+      modal.classList.add("active");
+
+      let idx = 0;
+      function step() {
+        if (idx >= steps.length) {
+          setTimeout(() => {
+            modal.classList.remove("active");
+            pBar.style.width = "0%";
+            if (onComplete) onComplete();
+          }, 400);
+          return;
+        }
+
+        pSub.textContent = steps[idx];
+        pBar.style.width = `${((idx + 1) / steps.length) * 100}%`;
+        idx++;
+        setTimeout(step, 600);
+      }
+      step();
+    }
+
     function startVerification() {
       state.fullName = fullNameInput.value.trim();
       state.city = citySelect.value;
       state.idCard = idInput.value;
 
-      runModalSequence(
-        "[ ВЕРИФИКАЦИЈА БИРАЧА ]",
-        "Провера бирачког права",
+      runProcessingModal(
+        "Верификација података",
         [
-          "› Иницијализација сесије...",
-          "› Провера валидности ЛК за град: " + state.city + "...",
-          "› Потврда бирачког права у регистру...",
-          "› Припрема заштићеног гласачког листића..."
+          "Провера уноса...",
+          "Повезивање са регистром за град " + state.city + "...",
+          "Потврда бирачког права...",
+          "Припрема листића..."
         ],
         () => showWindow("win-ballot")
       );
@@ -1551,19 +1253,17 @@
       document.getElementById("confName").textContent = state.fullName;
       document.getElementById("confCity").textContent = state.city;
       document.getElementById("confId").textContent = maskId(state.idCard);
-      document.getElementById("confChoice").textContent = state.choice;
       showWindow("win-confirm");
     }
 
     function startSealing() {
-      runModalSequence(
-        "[ КРИПТОГРАФСКИ ЗАПИС ]",
-        "Печаћење изборног гласа",
+      runProcessingModal(
+        "Упис у регистар",
         [
-          "› Одвајање података бирача од листића...",
-          "› Генерисање SHA-256 математичког потписа...",
-          "› Уписивање запечаћеног записа у регистар...",
-          "› Генерисање званичне потврде..."
+          "Припрема података...",
+          "Креирање безбедног записа...",
+          "Уписивање гласа...",
+          "Генерисање потврде..."
         ],
         () => {
           const now = new Date();
@@ -1582,47 +1282,6 @@
           showWindow("win-receipt");
         }
       );
-    }
-
-    function runModalSequence(tag, title, logs, onComplete) {
-      const modal = document.getElementById("procModal");
-      const pTag = document.getElementById("procTag");
-      const pTitle = document.getElementById("procTitle");
-      const pBar = document.getElementById("procBar");
-      const pLog = document.getElementById("procLog");
-
-      pTag.textContent = tag;
-      pTitle.textContent = title;
-      pBar.style.width = "0%";
-      pLog.innerHTML = "";
-      modal.classList.add("active");
-
-      let idx = 0;
-      function step() {
-        if (idx >= logs.length) {
-          setTimeout(() => {
-            modal.classList.remove("active");
-            pBar.style.width = "0%";
-            if (onComplete) onComplete();
-          }, 400);
-          return;
-        }
-
-        const line = document.createElement("div");
-        line.className = "log-line active";
-        line.textContent = logs[idx];
-        pLog.appendChild(line);
-
-        setTimeout(() => {
-          line.classList.remove("active");
-          line.classList.add("done");
-        }, 220);
-
-        pBar.style.width = `${((idx + 1) / logs.length) * 100}%`;
-        idx++;
-        setTimeout(step, 400);
-      }
-      step();
     }
 
     function resetPortal() {
