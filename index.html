@@ -461,8 +461,28 @@
       appearance: none;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23000000' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 16px center;
+      background-position: right 12px center;
       cursor: pointer;
+    }
+    
+    /* ДИЗАЈН ЗА 3 ПОЉА ДАТУМА РОЂЕЊА */
+    .date-row {
+      display: flex;
+      gap: 8px;
+    }
+    .date-row .day-input {
+      width: 80px;
+      text-align: center;
+      padding: 0;
+    }
+    .date-row .month-input {
+      flex: 1;
+      padding-left: 12px;
+    }
+    .date-row .year-input {
+      width: 90px;
+      text-align: center;
+      padding: 0;
     }
 
     .input-error {
@@ -896,6 +916,7 @@
   <!-- HEADER -->
   <header class="header">
     <div class="brand" onclick="showWindow('win-landing')">
+      <!-- СЛИКА ЛОГОА logo.png -->
       <img src="logo.png" alt="МОБА" class="brand-logo-img" onerror="this.style.display='none'; document.getElementById('altBrandMark').style.display='flex';">
       <div class="brand-mark" id="altBrandMark">М</div>
       
@@ -990,6 +1011,8 @@
           </div>
 
           <form id="voteForm" onsubmit="event.preventDefault(); startVerification();">
+            
+            <!-- 1. ИМЕ И ПРЕЗИМЕ -->
             <div class="form-group">
               <div class="label-row">
                 <label for="fullName">Име и презиме</label>
@@ -997,6 +1020,7 @@
               <input type="text" id="fullName" placeholder="нпр. Милица Петровић" autocomplete="name" required>
             </div>
 
+            <!-- 2. ГРАД -->
             <div class="form-group">
               <div class="label-row">
                 <label for="city">Град</label>
@@ -1034,13 +1058,42 @@
               </select>
             </div>
 
+            <!-- 3. ДАТУМ РОЂЕЊА (Дан - Месец - Година) -->
             <div class="form-group">
               <div class="label-row">
-                <label for="idCard">Број личне карте</label>
-                <span class="counter" id="idCounter">0/9</span>
+                <label>Датум рођења</label>
               </div>
-              <input type="tel" id="idCard" placeholder="Унесите 9 цифара" maxlength="9" inputmode="numeric" required>
-              <div class="input-error" id="idError">Број личне карте мора садржати тачно 9 цифара.</div>
+              <div class="date-row">
+                <input type="text" id="dobDay" class="day-input" placeholder="Дан" maxlength="2" inputmode="numeric" required>
+                
+                <select id="dobMonth" class="month-input" required>
+                  <option value="" disabled selected>Месец</option>
+                  <option value="01">Јануар</option>
+                  <option value="02">Фебруар</option>
+                  <option value="03">Март</option>
+                  <option value="04">Април</option>
+                  <option value="05">Мај</option>
+                  <option value="06">Јун</option>
+                  <option value="07">Јул</option>
+                  <option value="08">Август</option>
+                  <option value="09">Септембар</option>
+                  <option value="10">Октобар</option>
+                  <option value="11">Новембар</option>
+                  <option value="12">Децембар</option>
+                </select>
+                
+                <input type="text" id="dobYear" class="year-input" placeholder="Год." maxlength="4" inputmode="numeric" required>
+              </div>
+            </div>
+
+            <!-- 4. ЈМБГ -->
+            <div class="form-group">
+              <div class="label-row">
+                <label for="jmbg">ЈМБГ</label>
+                <span class="counter" id="jmbgCounter">0/13</span>
+              </div>
+              <input type="tel" id="jmbg" placeholder="Унесите 13 цифара" maxlength="13" inputmode="numeric" required>
+              <div class="input-error" id="jmbgError">ЈМБГ није валидан или се не поклапа са датумом рођења.</div>
             </div>
 
             <div class="btn-row">
@@ -1107,8 +1160,12 @@
               <span class="summary-value" id="confCity">--</span>
             </div>
             <div class="summary-row">
-              <span class="summary-label">Број личне карте</span>
-              <span class="summary-value" id="confId">--</span>
+              <span class="summary-label">Датум рођења</span>
+              <span class="summary-value" id="confDob">--</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">ЈМБГ</span>
+              <span class="summary-value" id="confJmbg">--</span>
             </div>
             <div class="summary-row">
               <span class="summary-label">Ваш избор</span>
@@ -1157,8 +1214,12 @@
               <span class="summary-value" id="rcptCity">--</span>
             </div>
             <div class="summary-row">
-              <span class="summary-label">Лична карта</span>
-              <span class="summary-value" id="rcptId">--</span>
+              <span class="summary-label">Датум рођења</span>
+              <span class="summary-value" id="rcptDob">--</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">ЈМБГ</span>
+              <span class="summary-value" id="rcptJmbg">--</span>
             </div>
             <div class="summary-row">
               <span class="summary-label">Време уписа</span>
@@ -1247,7 +1308,8 @@
     const state = {
       fullName: "",
       city: "",
-      idCard: "",
+      dob: "",
+      jmbg: "",
       choice: "Студентска листа (Студенти побеђују)",
       timestamp: ""
     };
@@ -1311,37 +1373,127 @@
       }
     }
 
-    // ВАЛИДАЦИЈА ФОРМЕ
+    // ВАЛИДАЦИЈА ФОРМЕ & ЈМБГ АЛГОРИТАМ
     const fullNameInput = document.getElementById("fullName");
     const citySelect = document.getElementById("city");
-    const idInput = document.getElementById("idCard");
-    const idCounter = document.getElementById("idCounter");
-    const idError = document.getElementById("idError");
+    
+    // Нова поља за датум рођења
+    const dobDay = document.getElementById("dobDay");
+    const dobMonth = document.getElementById("dobMonth");
+    const dobYear = document.getElementById("dobYear");
+
+    const jmbgInput = document.getElementById("jmbg");
+    const jmbgCounter = document.getElementById("jmbgCounter");
+    const jmbgError = document.getElementById("jmbgError");
     const btnToBallot = document.getElementById("btnToBallot");
     const btnToConfirm = document.getElementById("btnToConfirm");
 
-    idInput.addEventListener("input", function() {
-      this.value = this.value.replace(/\D/g, "").slice(0, 9);
-      idCounter.textContent = `${this.value.length}/9`;
-      if (this.value.length === 9) {
-        idError.classList.remove("show");
-      }
+    // Форсирање само бројева за дан и годину
+    dobDay.addEventListener("input", function() {
+      this.value = this.value.replace(/\D/g, "").slice(0, 2);
+      validate();
+    });
+
+    dobYear.addEventListener("input", function() {
+      this.value = this.value.replace(/\D/g, "").slice(0, 4);
+      validate();
+    });
+
+    jmbgInput.addEventListener("input", function() {
+      this.value = this.value.replace(/\D/g, "").slice(0, 13);
+      jmbgCounter.textContent = `${this.value.length}/13`;
       validate();
     });
 
     fullNameInput.addEventListener("input", validate);
     citySelect.addEventListener("change", validate);
+    dobMonth.addEventListener("change", validate);
+
+    // Функција која проверава да ли је ЈМБГ математички тачан и да ли се поклапа са датумом
+    function checkJMBG(jmbg, dobStr) {
+      if (jmbg.length !== 13) return false;
+      if (!dobStr) return false;
+
+      const parts = dobStr.split('-');
+      if (parts.length !== 3) return false;
+      
+      const year = parts[0];
+      const month = parts[1];
+      const day = parts[2];
+
+      const y = year.slice(-3); // узима последње 3 цифре године
+      
+      const jDay = jmbg.substring(0, 2);
+      const jMonth = jmbg.substring(2, 4);
+      const jYear = jmbg.substring(4, 7);
+
+      // Провера поклапања датума рођења и ЈМБГ-а
+      if (day !== jDay || month !== jMonth || y !== jYear) {
+          return false;
+      }
+
+      // Званична провера контролне цифре (Mod 11 алгоритам)
+      const v = jmbg.split('').map(Number);
+      const s = 7*v[0] + 6*v[1] + 5*v[2] + 4*v[3] + 3*v[4] + 2*v[5] +
+                7*v[6] + 6*v[7] + 5*v[8] + 4*v[9] + 3*v[10] + 2*v[11];
+      const k = s % 11;
+      let m = 0;
+      
+      if (k === 1) return false; // Неважећи број
+      if (k > 1) m = 11 - k;
+
+      if (m !== v[12]) return false;
+
+      return true;
+    }
 
     function validate() {
       const isName = fullNameInput.value.trim().length >= 3;
       const isCity = citySelect.value !== "";
-      const isId = idInput.value.length === 9;
-      btnToBallot.disabled = !(isName && isCity && isId);
+      
+      let d = dobDay.value;
+      let m = dobMonth.value;
+      let y = dobYear.value;
+      
+      let dobVal = "";
+      // Проверавамо да ли су дан, месец и година попуњени (година мора имати тачно 4 цифре)
+      if (d && d !== "00" && m && y.length === 4) {
+          d = d.padStart(2, '0'); // додаје 0 на почетак ако је унет један број (нпр "5" постаје "05")
+          dobVal = `${y}-${m}-${d}`;
+      }
+
+      const jmbgVal = jmbgInput.value;
+      let isJmbgValid = false;
+
+      if (jmbgVal.length === 13) {
+        if (dobVal) {
+          isJmbgValid = checkJMBG(jmbgVal, dobVal);
+          if (!isJmbgValid) {
+            jmbgError.classList.add("show");
+          } else {
+            jmbgError.classList.remove("show");
+          }
+        } else {
+          jmbgError.classList.remove("show");
+        }
+      } else {
+         jmbgError.classList.remove("show");
+      }
+
+      btnToBallot.disabled = !(isName && isCity && dobVal && isJmbgValid);
     }
 
-    function maskId(id) {
-      if (id.length !== 9) return id;
-      return id.slice(0, 3) + "***" + id.slice(6);
+    // Форматира датум из YYYY-MM-DD у DD.MM.YYYY. за приказ
+    function formatDateDisplay(yyyy_mm_dd) {
+      if (!yyyy_mm_dd) return "";
+      const p = yyyy_mm_dd.split('-');
+      return `${p[2]}.${p[1]}.${p[0]}.`;
+    }
+
+    // Маскира ЈМБГ због приватности при приказу
+    function maskJMBG(jmbg) {
+      if (jmbg.length !== 13) return jmbg;
+      return jmbg.slice(0, 7) + "******";
     }
 
     function runProcessingModal(title, steps, onComplete) {
@@ -1376,7 +1528,9 @@
     function startVerification() {
       state.fullName = fullNameInput.value.trim();
       state.city = citySelect.value;
-      state.idCard = idInput.value;
+      const d = dobDay.value.padStart(2, '0');
+      state.dob = `${dobYear.value}-${dobMonth.value}-${d}`;
+      state.jmbg = jmbgInput.value;
 
       runProcessingModal(
         "Верификација података",
@@ -1400,7 +1554,8 @@
       if (!hasSelected) return;
       document.getElementById("confName").textContent = state.fullName;
       document.getElementById("confCity").textContent = state.city;
-      document.getElementById("confId").textContent = maskId(state.idCard);
+      document.getElementById("confDob").textContent = formatDateDisplay(state.dob);
+      document.getElementById("confJmbg").textContent = maskJMBG(state.jmbg);
       showWindow("win-confirm");
     }
 
@@ -1416,7 +1571,8 @@
       const payload = {
         fullName: state.fullName,
         city: state.city,
-        idCard: state.idCard,
+        dob: state.dob,
+        jmbg: state.jmbg,
         choice: state.choice,
         timestamp: state.timestamp
       };
@@ -1449,7 +1605,8 @@
             
             document.getElementById("rcptName").textContent = state.fullName;
             document.getElementById("rcptCity").textContent = state.city;
-            document.getElementById("rcptId").textContent = maskId(state.idCard);
+            document.getElementById("rcptDob").textContent = formatDateDisplay(state.dob);
+            document.getElementById("rcptJmbg").textContent = maskJMBG(state.jmbg);
             document.getElementById("rcptTime").textContent = state.timestamp;
             
             showWindow("win-receipt");
@@ -1467,8 +1624,11 @@
     function resetPortal() {
       fullNameInput.value = "";
       citySelect.value = "";
-      idInput.value = "";
-      idCounter.textContent = "0/9";
+      dobDay.value = "";
+      dobMonth.value = "";
+      dobYear.value = "";
+      jmbgInput.value = "";
+      jmbgCounter.textContent = "0/13";
       btnToBallot.disabled = true;
       btnToConfirm.disabled = true;
       hasSelected = false;
@@ -1476,7 +1636,8 @@
 
       state.fullName = "";
       state.city = "";
-      state.idCard = "";
+      state.dob = "";
+      state.jmbg = "";
       state.timestamp = "";
 
       showWindow("win-landing");
