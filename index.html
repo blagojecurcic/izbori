@@ -32,6 +32,9 @@
       padding: 0;
       -webkit-font-smoothing: antialiased;
       border-radius: 0 !important; /* Уклањање свих заобљења */
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
     }
 
     html, body {
@@ -55,8 +58,8 @@
     }
 
     input, select {
-      user-select: auto;
-      -webkit-user-select: auto;
+      user-select: auto !important;
+      -webkit-user-select: auto !important;
     }
 
     /* ДРЖАВНА ТРОБОЈКА */
@@ -104,6 +107,7 @@
       width: auto;
       display: block;
       object-fit: contain;
+      pointer-events: none;
     }
 
     .brand-mark {
@@ -446,7 +450,7 @@
 
     input:focus, select:focus {
       border: 2px solid var(--accent);
-      padding: 0 15px; /* компензација за дебљи бордер */
+      padding: 0 15px;
     }
 
     select {
@@ -488,7 +492,7 @@
     .ballot-item.selected {
       border: 2px solid var(--accent);
       background: #f0f4f8;
-      padding: 19px; /* компензација бордера */
+      padding: 19px;
     }
 
     .ballot-num {
@@ -668,8 +672,8 @@
     .site-footer {
       background: var(--panel);
       border-top: 1px solid var(--border);
-      padding: 20px;
-      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      padding: 16px 20px;
+      padding-bottom: max(16px, env(safe-area-inset-bottom));
       flex-shrink: 0;
       z-index: 50;
     }
@@ -680,7 +684,25 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+    }
+
+    .footer-state-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .footer-state-badge img {
+      height: 18px;
+      width: auto;
+      display: block;
+      pointer-events: none;
     }
 
     .footer-nav {
@@ -696,7 +718,7 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       text-transform: uppercase;
       text-decoration: none;
@@ -710,15 +732,16 @@
 
     .footer-nav .nav-sep {
       color: var(--border-light);
-      font-size: 12px;
+      font-size: 11px;
       user-select: none;
     }
 
     .footer-meta {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       text-align: center;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
     }
 
     .print-only {
@@ -794,7 +817,7 @@
     }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false;">
 
   <!-- ДРЖАВНА ТРОБОЈКА -->
   <div class="top-line"></div>
@@ -1110,6 +1133,10 @@
   <!-- ФУТЕР -->
   <footer class="site-footer">
     <div class="footer-wrap">
+      <div class="footer-state-badge">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Coat_of_arms_of_Serbia_small.svg/200px-Coat_of_arms_of_Serbia_small.svg.png" alt="Грб Србије" loading="lazy">
+        <span>Република Србија • Званични систем за гласање</span>
+      </div>
       <nav class="footer-nav">
         <button type="button" onclick="showWindow('win-landing')">Почетна</button>
         <span class="nav-sep">|</span>
@@ -1136,6 +1163,30 @@
     };
 
     let hasSelected = false;
+
+    // Спречавање десног клика
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // Спречавање инспекције и системских пречица (F12, Ctrl+U, Ctrl+Shift+I/J/C, Ctrl+S)
+    document.addEventListener('keydown', function(e) {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.key === "J" || e.key === "j" || e.key === "C" || e.key === "c")) ||
+        (e.ctrlKey && (e.key === "U" || e.key === "u" || e.key === "S" || e.key === "s"))
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // Спречавање превлачења (drag and drop)
+    document.addEventListener('dragstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
 
     // Спречавање pull-to-refresh на мобилним
     document.addEventListener('touchmove', function(e) {
@@ -1261,7 +1312,6 @@
 
     // LOGIKA ZA SLANJE PODATAKA PREKO GOOGLE SHEETS
     function startSealing() {
-      // 1. Priprema vremena
       const now = new Date();
       const dd = String(now.getDate()).padStart(2, '0');
       const mm = String(now.getMonth() + 1).padStart(2, '0');
@@ -1270,7 +1320,6 @@
       const min = String(now.getMinutes()).padStart(2, '0');
       state.timestamp = `${dd}.${mm}.${yyyy}. u ${hh}:${min}`;
 
-      // 2. Pakovanje podataka u format koji tvoja Google skripta ocekuje
       const payload = {
         fullName: state.fullName,
         city: state.city,
@@ -1279,22 +1328,20 @@
         timestamp: state.timestamp
       };
 
-      // 3. Prikazivanje modala za procesiranje
       const modal = document.getElementById("procModal");
       const pTitle = document.getElementById("procTitle");
       const pSub = document.getElementById("procSub");
       const pBar = document.getElementById("procBar");
 
-      pTitle.textContent = "Upis u registar";
-      pSub.textContent = "Povezivanje sa bazom i upis podataka...";
+      pTitle.textContent = "Упис у регистар";
+      pSub.textContent = "Повезивање са базом и упис података...";
       pBar.style.width = "40%";
       modal.classList.add("active");
 
-      // 4. Slanje podataka preko fetch API prema tvom Google linku
       fetch(scriptURL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'text/plain;charset=utf-8' // OVO JE KLJUCNO ZA GOOGLE SCRIPT JSON PARSE
+          'Content-Type': 'text/plain;charset=utf-8'
         },
         body: JSON.stringify(payload)
       })
@@ -1302,12 +1349,11 @@
       .then(data => {
         if (data.result === "success") {
           pBar.style.width = "100%";
-          pSub.textContent = "Uspješno upisano! Generisanje potvrde...";
+          pSub.textContent = "Успешно уписано! Генерисање потврде...";
           
           setTimeout(() => {
             modal.classList.remove("active");
             
-            // Popunjavanje potvrde
             document.getElementById("rcptName").textContent = state.fullName;
             document.getElementById("rcptCity").textContent = state.city;
             document.getElementById("rcptId").textContent = maskId(state.idCard);
@@ -1316,12 +1362,12 @@
             showWindow("win-receipt");
           }, 800);
         } else {
-          throw new Error(data.error || "Greška pri slanju.");
+          throw new Error(data.error || "Грешка при слању.");
         }
       })
       .catch(error => {
         modal.classList.remove("active");
-        alert("Došlo je do greške. Provjerite internet konekciju i pokušajte ponovo.");
+        alert("Дошло је до грешке. Проверите интернет везу и покушајте поново.");
       });
     }
 
