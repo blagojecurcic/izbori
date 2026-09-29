@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>МОБА — Званични систем за гласање</title>
+  <title>МОБА — Контролни центар</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,17 +11,17 @@
 
   <style>
     :root {
-      --bg: #f5f5f5;
-      --panel: #ffffff;
-      --border: #222222;
-      --border-light: #cccccc;
+      --bg-color: #f0f2f5;
+      --surface: #ffffff;
+      --border: #e0e0e0;
+      --border-dark: #222222;
       
-      --text: #111111;
+      --text-main: #111111;
       --text-muted: #555555;
       
       --accent: #003366;
-      --accent-hover: #002244;
-      --error: #cc0000;
+      --accent-light: #e6edf5;
+      --success: #0d8a4d;
       
       --font-main: 'Inter', Arial, sans-serif;
     }
@@ -30,40 +30,19 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      -webkit-font-smoothing: antialiased;
-      border-radius: 0 !important; /* Уклањање свих заобљења за строг изглед */
-      -webkit-touch-callout: none;
-      -webkit-user-select: none;
-      user-select: none;
-    }
-
-    html, body {
-      width: 100vw;
-      height: 100vh;
-      height: 100dvh;
-      overflow: hidden !important;
-      position: fixed;
-      inset: 0;
-      touch-action: none;
-      overscroll-behavior: none;
-      background: var(--bg);
-      color: var(--text);
       font-family: var(--font-main);
+      border-radius: 4px; /* Благи радијус за админ панел због прегледности */
     }
 
     body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    /* Омогућавање селекције само унутар поља за унос */
-    input, select {
-      user-select: auto !important;
-      -webkit-user-select: auto !important;
-    }
-
-    /* ДРЖАВНА ТРОБОЈКА */
+    /* ДРЖАВНА ТРОБОЈКА - ВРХ */
     .top-line {
       position: fixed;
       top: 0;
@@ -71,57 +50,32 @@
       width: 100%;
       height: 4px;
       z-index: 10000;
-      background: linear-gradient(
-        90deg,
-        #c92a2a 0% 33.33%,
-        #1c4eb8 33.33% 66.66%,
-        #ffffff 66.66% 100%
-      );
-      border-bottom: 1px solid var(--border);
+      background: linear-gradient(90deg, #c92a2a 0% 33.33%, #1c4eb8 33.33% 66.66%, #ffffff 66.66% 100%);
+      border-radius: 0;
     }
 
-    /* HEADER */
-    .header {
-      height: 70px;
-      width: 100%;
+    /* САЈДБАР (ЛЕВИ МЕНИ) */
+    .sidebar {
+      width: 280px;
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 24px;
-      padding-top: max(4px, env(safe-area-inset-top));
-      border-bottom: 1px solid var(--border);
-      background: var(--panel);
-      flex-shrink: 0;
-      z-index: 50;
+      flex-direction: column;
+      z-index: 10;
+      padding-top: 4px; /* због тробојке */
     }
 
     .brand {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       gap: 12px;
-      cursor: pointer;
-      text-decoration: none;
     }
 
-    .brand-logo-img {
-      height: 40px;
+    .brand img {
+      height: 36px;
       width: auto;
-      display: block;
-      object-fit: contain;
-      pointer-events: none;
-    }
-
-    .brand-mark {
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--border);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: var(--text);
-      color: #fff;
-      font-weight: 700;
-      font-size: 18px;
     }
 
     .brand-text {
@@ -130,10 +84,11 @@
     }
 
     .brand-name {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
-      color: var(--text);
+      color: var(--text-main);
       text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
 
     .brand-sub {
@@ -142,1506 +97,624 @@
       text-transform: uppercase;
     }
 
-    .menu-btn {
-      width: 44px;
-      height: 44px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      cursor: pointer;
+    .nav-menu {
+      padding: 24px 16px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 6px;
-      transition: background 0.2s;
-    }
-
-    .menu-btn:hover {
-      background: #f0f0f0;
-    }
-
-    .menu-btn span {
-      width: 22px;
-      height: 2px;
-      background: var(--text);
-    }
-
-    /* DRAWER */
-    .overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      opacity: 0;
-      visibility: hidden;
-      transition: 0.2s ease;
-      z-index: 80;
-    }
-
-    .overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .drawer {
-      position: fixed;
-      right: 0;
-      top: 0;
-      height: 100%;
-      width: min(340px, 86vw);
-      background: var(--panel);
-      border-left: 1px solid var(--border);
-      z-index: 90;
-      transform: translateX(100%);
-      transition: 0.3s ease;
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .drawer.active {
-      transform: translateX(0);
-    }
-
-    .drawer-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--border);
-      margin-bottom: 24px;
-    }
-
-    .drawer-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--text);
-      text-transform: uppercase;
-    }
-
-    .close-btn {
-      width: 36px;
-      height: 36px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      color: var(--text);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .close-btn:hover {
-      background: #f0f0f0;
-    }
-
-    .drawer-links {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .drawer-link {
-      border: 1px solid var(--border-light);
-      padding: 16px;
-      color: var(--text);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      text-transform: uppercase;
-      background: var(--panel);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: all 0.2s;
-    }
-
-    .drawer-link:hover {
-      border-color: var(--border);
-      background: #fafafa;
-    }
-
-    /* ГЛАВНИ ПРОСТОР (ПАМЕТНО ЦЕНТРИРАЊЕ) */
-    main {
-      flex: 1;
-      width: 100%;
-      display: flex;
-      flex-direction: column; /* Ово омогућава margin: auto центрирање */
-      padding: 40px 16px;
-      overflow-y: auto;
-      touch-action: pan-y;
-    }
-
-    .app {
-      width: min(640px, 100%);
-      margin: auto; /* Ово савршено центрира контејнер вертикално и хоризонтално */
-    }
-
-    /* СЕКЦИЈЕ / ПРОЗОРИ */
-    .window {
-      display: none;
-    }
-
-    .window.active {
-      display: block;
-    }
-
-    .window-frame {
-      background: var(--panel);
-      border: 1px solid var(--border);
-      padding: 40px 32px;
-    }
-
-    @media (max-width: 520px) {
-      main {
-        padding: 24px 12px;
-      }
-      .window-frame {
-        padding: 24px 16px;
-      }
-    }
-
-    /* ХЕРО СЕКЦИЈА */
-    .hero {
-      text-align: center;
-    }
-
-    .eyebrow {
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      font-size: clamp(24px, 5vw, 32px);
-      line-height: 1.2;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 16px;
-      text-transform: uppercase;
-    }
-
-    .hero p {
-      color: var(--text-muted);
-      font-size: 15px;
-      line-height: 1.6;
-      max-width: 480px;
-      margin: 0 auto 32px;
-    }
-
-    /* ДУГМАД */
-    .primary-btn {
-      width: 100%;
-      height: 54px;
-      border: 2px solid var(--border);
-      background: var(--accent);
-      color: #fff;
-      font-family: var(--font-main);
-      font-size: 14px;
-      font-weight: 700;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-
-    .primary-btn:hover:not(:disabled) {
-      background: var(--accent-hover);
-    }
-
-    .primary-btn:disabled {
-      background: #e0e0e0;
-      border-color: var(--border-light);
-      color: #999;
-      cursor: not-allowed;
-    }
-
-    .secondary-btn {
-      height: 54px;
-      padding: 0 24px;
-      border: 1px solid var(--border);
-      background: var(--panel);
-      color: var(--text);
-      font-family: var(--font-main);
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      transition: background 0.2s;
-    }
-
-    .secondary-btn:hover {
-      background: #f0f0f0;
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 32px;
-    }
-
-    /* ФОРМА И ЗАГЛАВЉА */
-    .section-head {
-      margin-bottom: 32px;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 16px;
-    }
-
-    .step-tag {
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
-
-    .section-head h2 {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .section-head p {
-      color: var(--text-muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    .label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    label {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text);
-      text-transform: uppercase;
-    }
-
-    .counter {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    /* 16px је кључно да iOS не зумира форму */
-    input, select {
-      width: 100%;
-      height: 52px;
-      border: 1px solid var(--border);
-      background: #fff;
-      color: var(--text);
-      outline: none;
-      padding: 0 16px;
-      font-family: var(--font-main);
-      font-size: 16px; 
-      transition: border-color 0.2s;
-    }
-
-    input:focus, select:focus {
-      border: 2px solid var(--accent);
-      padding: 0 15px; /* компензација за 2px border */
-    }
-
-    select {
-      appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%23000000' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      cursor: pointer;
-    }
-    
-    /* ДИЗАЈН ЗА 3 ПОЉА ДАТУМА РОЂЕЊА */
-    .date-row {
-      display: flex;
       gap: 8px;
     }
-    .date-row .day-input {
-      width: 80px;
-      text-align: center;
-      padding: 0;
-    }
-    .date-row .month-input {
-      flex: 1;
-      padding-left: 12px;
-    }
-    .date-row .year-input {
-      width: 90px;
-      text-align: center;
-      padding: 0;
-    }
 
-    .input-error {
-      color: var(--error);
-      font-size: 12px;
-      margin-top: 8px;
-      display: none;
+    .nav-item {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 14px;
       font-weight: 600;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
     }
 
-    .input-error.show {
+    .nav-item:hover {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+    }
+
+    .nav-item.active {
+      background-color: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid #b3cde6;
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* ГЛАВНИ САДРЖАЈ */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-top: 4px;
+    }
+
+    .header-bar {
+      height: 70px;
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 32px;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .refresh-btn {
+      padding: 8px 16px;
+      background-color: var(--surface);
+      border: 1px solid var(--border-dark);
+      color: var(--text-main);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .refresh-btn:hover { background-color: var(--bg-color); }
+
+    .content-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px;
+      display: none;
+    }
+
+    .content-area.active {
       display: block;
     }
 
-    /* ГЛАСАЧКИ ЛИСТИЋ */
-    .ballot-item {
+    /* TAB 1: АНАЛИТИКА */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .kpi-card {
+      background-color: var(--surface);
       border: 1px solid var(--border);
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      cursor: pointer;
-      background: #fff;
-      transition: background 0.2s, border-color 0.2s;
+      padding: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
 
-    .ballot-item:hover {
-      background: #f9f9f9;
+    .kpi-title {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 12px;
     }
 
-    .ballot-item.selected {
-      border: 2px solid var(--accent);
-      background: #f0f4f8;
-      padding: 19px;
-    }
-
-    .ballot-num {
-      width: 48px;
-      height: 48px;
-      border: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--text);
-      font-size: 18px;
+    .kpi-value {
+      font-size: 36px;
       font-weight: 700;
-      background: #fff;
-      flex-shrink: 0;
+      color: var(--text-main);
     }
 
-    .ballot-item.selected .ballot-num {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
+    .kpi-sub {
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .ballot-info {
+    /* TAB 2: РЕГИСТАР (ЛИСТА) */
+    .registry-container {
+      display: flex;
+      gap: 24px;
+      height: 100%;
+      align-items: flex-start;
+    }
+
+    .list-pane {
       flex: 1;
-    }
-
-    .ballot-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 4px;
-    }
-
-    .ballot-sub {
-      font-size: 14px;
-      color: var(--text-muted);
-    }
-
-    .ballot-check {
-      width: 28px;
-      height: 28px;
-      border: 1px solid var(--border-light);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      background: #fff;
-    }
-
-    .ballot-item.selected .ballot-check {
-      border-color: var(--accent);
-      background: var(--accent);
-    }
-
-    .ballot-check svg {
-      width: 16px;
-      height: 16px;
-      stroke: #fff;
-      opacity: 0;
-    }
-
-    .ballot-item.selected .ballot-check svg {
-      opacity: 1;
-    }
-
-    /* РЕЗИМЕ / ТАБЕЛЕ */
-    .summary-box {
+      background-color: var(--surface);
       border: 1px solid var(--border);
-      margin-bottom: 24px;
-    }
-
-    .summary-row {
       display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 16px;
-      border-bottom: 1px solid var(--border-light);
-      background: #fff;
-    }
-
-    .summary-row:last-child {
-      border-bottom: 0;
-    }
-
-    .summary-label {
-      color: var(--text-muted);
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .summary-value {
-      color: var(--text);
-      font-size: 14px;
-      font-weight: 700;
-      text-align: right;
-      word-break: break-word;
-    }
-
-    .info-callout {
-      padding: 16px;
-      border: 1px solid var(--border);
-      background: #f9f9f9;
-      color: var(--text);
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 24px;
-      font-weight: 600;
-    }
-
-    /* ПРИКАЗ ПОТВРДЕ */
-    .receipt-center {
-      text-align: center;
-      padding: 20px 0 30px 0;
-    }
-
-    .success-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-      color: var(--text);
-    }
-
-    /* WELCOME POP-UP (АПСОЛУТНИ ЦЕНТАР) */
-    .welcome-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display: none;
-      align-items: center; /* Центрира по вертикали */
-      justify-content: center; /* Центрира по хоризонтали */
-      padding: 16px;
-      background: rgba(0, 0, 0, 0.7); 
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-    }
-
-    .welcome-modal.active {
-      display: flex;
-      animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    .welcome-card {
-      width: min(400px, 100%);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      padding: 32px 24px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      animation: modalSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes modalSlideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    .welcome-icon {
-      margin-bottom: 16px;
-    }
-
-    .welcome-icon svg {
-      width: 40px;
-      height: 40px;
-      stroke: var(--accent);
-      fill: none;
-      stroke-width: 1.5;
-    }
-
-    .welcome-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-
-    .welcome-text {
-      font-size: 14px;
-      line-height: 1.5;
-      color: var(--text-muted);
-      margin-bottom: 24px;
-    }
-
-    /* МОДАЛ ЗА ОБРАДУ ПОДАТАКА */
-    .processing-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .processing-modal.active {
-      display: flex;
-    }
-
-    .proc-card {
-      width: min(400px, 100%);
-      border: 2px solid var(--border);
-      background: var(--panel);
-      padding: 32px;
-      text-align: center;
-    }
-
-    .proc-title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-
-    .proc-sub {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-bottom: 24px;
-      min-height: 21px;
-    }
-
-    .proc-bar-bg {
-      width: 100%;
-      height: 6px;
-      background: var(--border-light);
+      flex-direction: column;
+      height: 100%;
       overflow: hidden;
     }
 
-    .proc-bar-fill {
-      width: 0%;
-      height: 100%;
-      background: var(--accent);
-      transition: width 0.3s linear;
-    }
-
-    /* ФУТЕР */
-    .site-footer {
-      background: var(--panel);
-      border-top: 1px solid var(--border);
+    .list-header {
       padding: 16px 20px;
-      padding-bottom: max(16px, env(safe-area-inset-bottom));
-      flex-shrink: 0;
-      z-index: 50;
+      border-bottom: 1px solid var(--border);
+      background-color: #fafafa;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
     }
 
-    .footer-wrap {
-      max-width: 800px;
-      margin: 0 auto;
+    .list-body {
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .list-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .list-item:hover {
+      background-color: var(--accent-light);
+    }
+
+    .list-item.selected {
+      background-color: var(--accent);
+      color: #fff;
+    }
+
+    .item-name {
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .list-item.selected .item-name {
+      color: #fff;
+    }
+
+    .item-city, .item-date {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .list-item.selected .item-city,
+    .list-item.selected .item-date {
+      color: #e0e0e0;
+    }
+
+    /* ТИКЕТ (ДЕТАЉИ СА ДЕСНЕ СТРАНЕ) */
+    .ticket-pane {
+      width: 400px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      height: 100%;
+      overflow-y: auto;
+      display: none; /* Сакривено док се не кликне */
+      flex-direction: column;
+      box-shadow: -4px 0 15px rgba(0,0,0,0.03);
+    }
+
+    .ticket-pane.active {
+      display: flex;
+      animation: slideInRight 0.3s ease;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(20px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .ticket-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+      background-color: #fafafa;
+      position: relative;
+    }
+
+    .close-ticket {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .close-ticket:hover { color: var(--error); }
+
+    .ticket-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      background: var(--success);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .ticket-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .ticket-city {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .ticket-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .info-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .info-val {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      word-break: break-word;
+    }
+
+    .ticket-signature {
+      margin-top: 10px;
+      border: 1px dashed var(--border-light);
+      background: #f9f9f9;
+      padding: 10px;
+      text-align: center;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ticket-signature img {
+      max-width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+    }
+
+    /* LOADER */
+    .loader-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.8);
+      z-index: 100;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-    }
-
-    .footer-state-badge {
-      display: inline-flex;
-      align-items: center;
       justify-content: center;
-      gap: 10px;
-      color: var(--text);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .footer-state-badge img {
-      height: 24px;
-      width: auto;
-      display: block;
-      pointer-events: none;
-    }
-
-    .footer-nav {
-      display: flex;
-      align-items: center;
       gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
     }
-
-    .footer-nav a,
-    .footer-nav button {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      text-decoration: none;
-      cursor: pointer;
+    .loader-overlay.hidden { display: none; }
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50% !important;
+      animation: spin 1s linear infinite;
     }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-    .footer-nav a:hover,
-    .footer-nav button:hover {
-      color: var(--text);
-    }
-
-    .footer-nav .nav-sep {
-      color: var(--border-light);
-      font-size: 11px;
-      user-select: none;
-    }
-
-    .footer-meta {
-      font-size: 10px;
-      color: var(--text-muted);
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .print-only {
-      display: none;
-    }
-
-    /* ШТАМПА */
-    @media print {
-      html, body {
-        overflow: visible !important;
-        position: static !important;
-        background: #fff !important;
-        color: #000 !important;
-      }
-      .top-line, .header, .site-footer, .btn-row, .drawer, .overlay, .processing-modal, .welcome-modal {
-        display: none !important;
-      }
-      main {
-        padding: 0 !important;
-      }
-      .window-frame {
-        border: none !important;
-        padding: 0 !important;
-      }
-      .window {
-        display: none !important;
-      }
-      #win-receipt {
-        display: block !important;
-      }
-      .print-only {
-        display: block !important;
-        border-bottom: 2px solid #000;
-        padding-bottom: 16px;
-        margin-bottom: 32px;
-      }
-      .print-only h1 {
-        font-size: 20px;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: #000;
-        margin-bottom: 8px;
-      }
-      .print-only p {
-        font-size: 12px;
-        color: #000;
-      }
-      .summary-box {
-        border: 1px solid #000 !important;
-      }
-      .summary-row {
-        border-bottom: 1px solid #000 !important;
-      }
-      .summary-label {
-        color: #000 !important;
-      }
-      .summary-value {
-        color: #000 !important;
-      }
-      .print-signatures {
-        display: flex !important;
-        justify-content: space-between;
-        margin-top: 80px;
-      }
-      .sign-box {
-        border-top: 1px solid #000;
-        width: 200px;
-        text-align: center;
-        font-size: 12px;
-        padding-top: 8px;
-        text-transform: uppercase;
-      }
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 900px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; align-items: center; justify-content: space-between; padding-right: 16px; }
+      .nav-menu { flex-direction: row; padding: 0; gap: 0; }
+      .nav-item { border: none !important; border-bottom: 3px solid transparent !important; border-radius: 0 !important; }
+      .nav-item.active { background: transparent; border-bottom: 3px solid var(--accent) !important; }
+      
+      .registry-container { flex-direction: column; }
+      .ticket-pane { width: 100%; height: auto; flex: 1; display: none; }
+      .list-pane { flex: 1; }
+      
+      /* Кад се отвори тикет, сакриј листу на мобилном */
+      .registry-container.ticket-open .list-pane { display: none; }
+      .registry-container.ticket-open .ticket-pane { display: flex; }
     }
   </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-  <!-- ДРЖАВНА ТРОБОЈКА -->
+  <!-- ВРХ ТРОБОЈКА -->
   <div class="top-line"></div>
 
-  <!-- HEADER -->
-  <header class="header">
-    <div class="brand" onclick="showWindow('win-landing')">
-      <!-- СЛИКА ЛОГОА logo.png -->
-      <img src="logo.png" alt="МОБА" class="brand-logo-img" onerror="this.style.display='none'; document.getElementById('altBrandMark').style.display='flex';">
-      <div class="brand-mark" id="altBrandMark">М</div>
-      
+  <!-- САЈДБАР -->
+  <aside class="sidebar">
+    <div class="brand">
+      <!-- Промени у свој лого ако је потребно -->
+      <img src="logo.png" alt="MOBA" onerror="this.style.display='none'">
       <div class="brand-text">
-        <span class="brand-name">МОБА</span>
-        <span class="brand-sub">Гласачки портал</span>
+        <span class="brand-name">Контролни Центар</span>
+        <span class="brand-sub">Покрет Моба</span>
       </div>
     </div>
-
-    <button class="menu-btn" type="button" aria-label="Мени" onclick="toggleDrawer(true)">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </header>
-
-  <!-- БОЧНИ МЕНИ -->
-  <div class="overlay" id="overlay" onclick="toggleDrawer(false)"></div>
-  <aside class="drawer" id="drawer">
-    <div class="drawer-head">
-      <span class="drawer-title">Навигација</span>
-      <button class="close-btn" type="button" onclick="toggleDrawer(false)">✕</button>
-    </div>
-    <nav class="drawer-links">
-      <a href="#" class="drawer-link" onclick="showWindow('win-landing'); toggleDrawer(false); return false;">
-        Почетна <span>→</span>
-      </a>
-      <a href="#" class="drawer-link" onclick="showWindow('win-security'); toggleDrawer(false); return false;">
-        Сигурност и протокол <span>→</span>
-      </a>
-      <a href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer" class="drawer-link">
-        Званични сајт ↗
-      </a>
+    <nav class="nav-menu">
+      <div class="nav-item active" onclick="switchTab('analytics')" id="nav-analytics">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18M9 21V9"></path></svg>
+        Аналитика
+      </div>
+      <div class="nav-item" onclick="switchTab('registry')" id="nav-registry">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+        Регистар
+      </div>
     </nav>
   </aside>
 
   <!-- ГЛАВНИ САДРЖАЈ -->
-  <main id="mainContent">
-    <div class="app">
+  <main class="main-content">
+    <div class="header-bar">
+      <div class="header-title" id="headerTitle">Аналитика Система</div>
+      <button class="refresh-btn" onclick="fetchData()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2v6h-6M3 12a9 9 0 0 1 15-6.7L21 8M3 22v-6h6M21 12a9 9 0 0 1-15 6.7L3 16"/></svg>
+        Освежи
+      </button>
+    </div>
 
-      <!-- 0. ПОЧЕТНА -->
-      <section class="window active" id="win-landing">
-        <div class="window-frame">
-          <div class="hero">
-            <div class="eyebrow">Службени портал</div>
-            <h1>Гласачки портал</h1>
-            <p>Званични регистар Покрета МОБА за безбедно и транспарентно спровођење изборног процеса.</p>
-            <button class="primary-btn" type="button" onclick="showWindow('win-form')">
-              Приступи гласању
-            </button>
+    <!-- ЛОАДЕР -->
+    <div class="loader-overlay" id="loader">
+      <div class="spinner"></div>
+      <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Повлачење података...</div>
+    </div>
+
+    <!-- ТАБ 1: АНАЛИТИКА -->
+    <div class="content-area active" id="tab-analytics">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Улазак на портал (Посете)</div>
+          <div class="kpi-value" id="valVisits">0</div>
+          <div class="kpi-sub">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Број отварања приступнице
           </div>
         </div>
-      </section>
-
-      <!-- СИГУРНОСТ & ИНФОРМАЦИЈЕ -->
-      <section class="window" id="win-security">
-        <div class="window-frame">
-          <div class="section-head">
-            <div class="step-tag">Информације</div>
-            <h2>Сигурност и заштита</h2>
-            <p>Протокол заштите идентитета бирача и интегритета изборних података.</p>
+        <div class="kpi-card">
+          <div class="kpi-title">Успешно гласали</div>
+          <div class="kpi-value" style="color: var(--success);" id="valCompleted">0</div>
+          <div class="kpi-sub" style="color: var(--success);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            Потврђени и потписани гласови
           </div>
-
-          <div class="summary-box">
-            <div class="summary-row">
-              <span class="summary-label">01. Тајност гласа</span>
-              <span class="summary-value">Идентитет се одваја од листића</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">02. Заштита записа</span>
-              <span class="summary-value">Стандардни криптографски ланац</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">03. Верификација</span>
-              <span class="summary-value">Званична дигитална потврда</span>
-            </div>
-          </div>
-
-          <button class="secondary-btn" type="button" onclick="showWindow('win-landing')">
-            ← Назад на почетну
-          </button>
         </div>
-      </section>
-
-      <!-- КОРАК 1: ПРИСТУПНИЦА -->
-      <section class="window" id="win-form">
-        <div class="window-frame">
-          <div class="section-head">
-            <div class="step-tag">Корак 01 од 03</div>
-            <h2>Приступница</h2>
-            <p>Унесите податке за проверу бирачког права у регистру.</p>
+        <div class="kpi-card">
+          <div class="kpi-title">Стопа конверзије</div>
+          <div class="kpi-value" id="valConversion">0%</div>
+          <div class="kpi-sub">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 6l-9.5 9.5-5-5L1 18"/></svg>
+            Проценат посетилаца који су гласали
           </div>
+        </div>
+      </div>
+    </div>
 
-          <form id="voteForm" onsubmit="event.preventDefault(); startVerification();">
-            
-            <!-- 1. ИМЕ И ПРЕЗИМЕ -->
-            <div class="form-group">
-              <div class="label-row">
-                <label for="fullName">Име и презиме</label>
-              </div>
-              <input type="text" id="fullName" placeholder="нпр. Милица Петровић" autocomplete="name" required>
+    <!-- ТАБ 2: РЕГИСТАР -->
+    <div class="content-area" id="tab-registry">
+      <div class="registry-container" id="regContainer">
+        
+        <!-- Листа -->
+        <div class="list-pane">
+          <div class="list-header">
+            <div>Име и Презиме</div>
+            <div>Град</div>
+            <div>Датум и Време</div>
+          </div>
+          <div class="list-body" id="listBody">
+            <!-- Редови се генеришу динамички преко ЈС -->
+          </div>
+        </div>
+
+        <!-- Тикет (Детаљи) -->
+        <div class="ticket-pane" id="ticketPane">
+          <div class="ticket-header">
+            <svg class="close-ticket" onclick="closeTicket()" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <div class="ticket-badge">Оверен Запис</div>
+            <div class="ticket-name" id="tName">--</div>
+            <div class="ticket-city" id="tCityTime">--</div>
+          </div>
+          <div class="ticket-body">
+            <div class="info-group">
+              <span class="info-label">Датум рођења</span>
+              <span class="info-val" id="tDob">--</span>
             </div>
-
-            <!-- 2. ГРАД -->
-            <div class="form-group">
-              <div class="label-row">
-                <label for="city">Град</label>
-              </div>
-              <select id="city" required>
-                <option value="" disabled selected>Изаберите град са списка</option>
-                <option value="Београд">Београд</option>
-                <option value="Нови Сад">Нови Сад</option>
-                <option value="Ниш">Ниш</option>
-                <option value="Крагујевац">Крагујевац</option>
-                <option value="Суботица">Суботица</option>
-                <option value="Зрењанин">Зрењанин</option>
-                <option value="Панчево">Панчево</option>
-                <option value="Чачак">Чачак</option>
-                <option value="Крушевац">Крушевац</option>
-                <option value="Краљево">Краљево</option>
-                <option value="Нови Пазар">Нови Пазар</option>
-                <option value="Смедерево">Смедерево</option>
-                <option value="Лесковац">Лесковац</option>
-                <option value="Ужице">Ужице</option>
-                <option value="Ваљево">Ваљево</option>
-                <option value="Врање">Врање</option>
-                <option value="Шабац">Шабац</option>
-                <option value="Сомбор">Сомбор</option>
-                <option value="Пожаревац">Пожаревац</option>
-                <option value="Пирот">Пирот</option>
-                <option value="Зајечар">Зајечар</option>
-                <option value="Кикинда">Кикинда</option>
-                <option value="Сремска Митровица">Сремска Митровица</option>
-                <option value="Јагодина">Јагодина</option>
-                <option value="Вршац">Вршац</option>
-                <option value="Бор">Бор</option>
-                <option value="Прокупље">Прокупље</option>
-                <option value="Лозница">Лозница</option>
-              </select>
+            <div class="info-group">
+              <span class="info-label">ЈМБГ</span>
+              <span class="info-val" id="tJmbg">--</span>
             </div>
-
-            <!-- 3. ДАТУМ РОЂЕЊА (Дан - Месец - Година) -->
-            <div class="form-group">
-              <div class="label-row">
-                <label>Датум рођења</label>
-              </div>
-              <div class="date-row">
-                <input type="text" id="dobDay" class="day-input" placeholder="Дан" maxlength="2" inputmode="numeric" required>
-                
-                <select id="dobMonth" class="month-input" required>
-                  <option value="" disabled selected>Месец</option>
-                  <option value="01">Јануар</option>
-                  <option value="02">Фебруар</option>
-                  <option value="03">Март</option>
-                  <option value="04">Април</option>
-                  <option value="05">Мај</option>
-                  <option value="06">Јун</option>
-                  <option value="07">Јул</option>
-                  <option value="08">Август</option>
-                  <option value="09">Септембар</option>
-                  <option value="10">Октобар</option>
-                  <option value="11">Новембар</option>
-                  <option value="12">Децембар</option>
-                </select>
-                
-                <input type="text" id="dobYear" class="year-input" placeholder="Год." maxlength="4" inputmode="numeric" required>
+            <div class="info-group">
+              <span class="info-label">Одабрана Листа</span>
+              <span class="info-val" id="tChoice">--</span>
+            </div>
+            <div class="info-group">
+              <span class="info-label">Својеручни потпис бирача</span>
+              <div class="ticket-signature" id="tSignature">
+                <!-- Слика потписа долази овде -->
               </div>
             </div>
-
-            <!-- 4. ЈМБГ -->
-            <div class="form-group">
-              <div class="label-row">
-                <label for="jmbg">ЈМБГ</label>
-                <span class="counter" id="jmbgCounter">0/13</span>
-              </div>
-              <input type="tel" id="jmbg" placeholder="Унесите 13 цифара" maxlength="13" inputmode="numeric" required>
-              <div class="input-error" id="jmbgError">ЈМБГ није валидан или се не поклапа са датумом рођења.</div>
-            </div>
-
-            <div class="btn-row">
-              <button class="secondary-btn" type="button" onclick="showWindow('win-landing')">
-                ← Одустани
-              </button>
-              <button class="primary-btn" type="submit" id="btnToBallot" disabled>
-                Настави даље →
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <!-- КОРАК 2: ГЛАСАЧКИ ЛИСТИЋ -->
-      <section class="window" id="win-ballot">
-        <div class="window-frame">
-          <div class="section-head">
-            <div class="step-tag">Корак 02 од 03</div>
-            <h2>Гласачки листић</h2>
-            <p>Означите изборну листу за коју дајете глас.</p>
-          </div>
-
-          <div class="ballot-item" id="candidateCard" onclick="selectCandidate()">
-            <div class="ballot-num">1</div>
-            <div class="ballot-info">
-              <div class="ballot-title">Студентска листа</div>
-              <div class="ballot-sub">Студенти побеђују</div>
-            </div>
-            <div class="ballot-check">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="3">
-                <path d="m5 12 4 4L19 6"/>
-              </svg>
-            </div>
-          </div>
-
-          <div class="btn-row">
-            <button class="secondary-btn" type="button" onclick="showWindow('win-form')">
-              ← Назад
-            </button>
-            <button class="primary-btn" type="button" id="btnToConfirm" disabled onclick="prepareConfirmation()">
-              Прегледај избор →
-            </button>
           </div>
         </div>
-      </section>
 
-      <!-- КОРАК 3: ПРОВЕРА ИЗБОРА -->
-      <section class="window" id="win-confirm">
-        <div class="window-frame">
-          <div class="section-head">
-            <div class="step-tag">Корак 03 од 03</div>
-            <h2>Провера избора</h2>
-            <p>Проверите податке пре трајног уписа у систем.</p>
-          </div>
-
-          <div class="summary-box">
-            <div class="summary-row">
-              <span class="summary-label">Име и презиме</span>
-              <span class="summary-value" id="confName">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Град</span>
-              <span class="summary-value" id="confCity">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Датум рођења</span>
-              <span class="summary-value" id="confDob">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">ЈМБГ</span>
-              <span class="summary-value" id="confJmbg">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Ваш избор</span>
-              <span class="summary-value" id="confChoice">Студентска листа (Студенти побеђују)</span>
-            </div>
-          </div>
-
-          <div class="info-callout">
-            Напомена: Након коначне потврде, глас се заводи у регистар и подаци се више не могу мењати.
-          </div>
-
-          <div class="btn-row">
-            <button class="secondary-btn" type="button" onclick="showWindow('win-ballot')">
-              ← Измени
-            </button>
-            <button class="primary-btn" type="button" onclick="startSealing()">
-              Потврди глас
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <!-- КОРАК 4: ПОТВРДА (RECEIPT) -->
-      <section class="window" id="win-receipt">
-        <div class="window-frame">
-          <div class="print-only">
-            <h1>Покрет МОБА — Потврда гласања</h1>
-            <p>Централни изборни регистар • Документ генерисан електронским путем</p>
-          </div>
-
-          <div class="receipt-center">
-            <div class="success-icon">✓</div>
-            <h2>Гласање је успешно обављено</h2>
-            <p style="color: var(--text-muted); font-size: 14px; margin-top: 8px;">
-              Ваш глас је трајно уписан у изборни протокол.
-            </p>
-          </div>
-
-          <div class="summary-box">
-            <div class="summary-row">
-              <span class="summary-label">Бирач</span>
-              <span class="summary-value" id="rcptName">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Град</span>
-              <span class="summary-value" id="rcptCity">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Датум рођења</span>
-              <span class="summary-value" id="rcptDob">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">ЈМБГ</span>
-              <span class="summary-value" id="rcptJmbg">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Време уписа</span>
-              <span class="summary-value" id="rcptTime">--</span>
-            </div>
-            <div class="summary-row">
-              <span class="summary-label">Одабрана листа</span>
-              <span class="summary-value">Студентска листа (Студенти побеђују)</span>
-            </div>
-          </div>
-
-          <div class="print-signatures print-only">
-            <div class="sign-box">М.П. бирачког одбора</div>
-            <div class="sign-box">Потпис бирача</div>
-          </div>
-
-          <div class="btn-row">
-            <button class="secondary-btn" type="button" onclick="resetPortal()">
-              Почетна страна
-            </button>
-            <button class="primary-btn" type="button" onclick="window.print()">
-              Штампај потврду
-            </button>
-          </div>
-        </div>
-      </section>
-
+      </div>
     </div>
   </main>
 
-  <!-- WELCOME POP-UP (ПРОФЕСИОНАЛНИ ДИЗАЈН) -->
-  <div class="welcome-modal active" id="welcomeModal">
-    <div class="welcome-card">
-      <div class="welcome-icon">
-        <svg viewBox="0 0 24 24">
-          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-        </svg>
-      </div>
-      <div class="welcome-title">Заштита података</div>
-      <div class="welcome-text">
-        Сви подаци које уносите су потпуно анонимни и сигурни.
-        <br><br>
-        Користе се искључиво за легитимну верификацију ваше подршке и не деле се са трећим лицима.
-      </div>
-      <button class="primary-btn" type="button" onclick="closeWelcomeModal()">
-        Разумем и прихватам
-      </button>
-    </div>
-  </div>
-
-  <!-- МОДАЛ ЗА ОБРАДУ -->
-  <div class="processing-modal" id="procModal">
-    <div class="proc-card">
-      <div class="proc-title" id="procTitle">Обрада у току</div>
-      <div class="proc-sub" id="procSub">Молимо сачекајте...</div>
-      <div class="proc-bar-bg">
-        <div class="proc-bar-fill" id="procBar"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ФУТЕР -->
-  <footer class="site-footer">
-    <div class="footer-wrap">
-      <div class="footer-state-badge">
-        <img src="grb.png" alt="Грб Србије" loading="lazy">
-        <span>Република Србија • Званични систем за гласање</span>
-      </div>
-      <nav class="footer-nav">
-        <button type="button" onclick="showWindow('win-landing')">Почетна</button>
-        <span class="nav-sep">|</span>
-        <button type="button" onclick="showWindow('win-security')">Сигурност</button>
-        <span class="nav-sep">|</span>
-        <a href="https://www.pokretmoba.com/" target="_blank" rel="noopener noreferrer">Званични сајт</a>
-      </nav>
-      <div class="footer-meta">
-        © 2026 ПОКРЕТ МОБА. СВА ПРАВА ЗАДРЖАНА.
-      </div>
-    </div>
-  </footer>
-
   <script>
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbw6Dly5-J1Z434RUr5FdOKdGhTuq5XmVLv8WiYucd2iFmK8KM--ahe_yrWxSdI2_RSqJg/exec';
+    // ТВОЈ GOOGLE APPS SCRIPT ЛИНК 
+    // Напомена: Ово ради само ако је у Apps Scriptu имплементирана doGet функција из претходног корака!
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxdeOYJDzzIP0KYF3-41aNJ7rR7CgTw4-ANOY1fQaIz3WF72Qmmrl1gYN_CLkD4RboYaA/exec';
 
-    const state = {
-      fullName: "",
-      city: "",
-      dob: "",
-      jmbg: "",
-      choice: "Студентска листа (Студенти побеђују)",
-      timestamp: ""
-    };
+    let globalRegistryData = [];
 
-    let hasSelected = false;
+    // МЕЊАЊЕ ТАБОВА
+    function switchTab(tab) {
+      document.getElementById('nav-analytics').classList.remove('active');
+      document.getElementById('nav-registry').classList.remove('active');
+      document.getElementById('tab-analytics').classList.remove('active');
+      document.getElementById('tab-registry').classList.remove('active');
 
-    // ЗАТВАРАЊЕ ПОЧЕТНОГ POP-UP ПРОЗОРА
-    function closeWelcomeModal() {
-      document.getElementById('welcomeModal').classList.remove('active');
-    }
+      document.getElementById(`nav-${tab}`).classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.add('active');
 
-    // Спречавање десног клика
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    // Спречавање инспекције и системских пречица
-    document.addEventListener('keydown', function(e) {
-      if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.key === "J" || e.key === "j" || e.key === "C" || e.key === "c")) ||
-        (e.ctrlKey && (e.key === "U" || e.key === "u" || e.key === "S" || e.key === "s"))
-      ) {
-        e.preventDefault();
-        return false;
-      }
-    });
-
-    // Спречавање превлачења (drag and drop)
-    document.addEventListener('dragstart', function(e) {
-      e.preventDefault();
-      return false;
-    });
-
-    // Спречавање pull-to-refresh на мобилним
-    document.addEventListener('touchmove', function(e) {
-      if (!e.target.closest('main') && !e.target.closest('.welcome-card')) {
-        e.preventDefault();
-      }
-    }, { passive: false });
-
-    // DRAWER LOGIKA
-    function toggleDrawer(open) {
-      document.getElementById("drawer").classList.toggle("active", open);
-      document.getElementById("overlay").classList.toggle("active", open);
-    }
-
-    document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape") toggleDrawer(false);
-    });
-
-    // НАВИГАЦИЈА КРОЗ ПРОЗОРЕ
-    function showWindow(winId) {
-      document.querySelectorAll(".window").forEach(w => w.classList.remove("active"));
-      const target = document.getElementById(winId);
-      if (target) {
-        target.classList.add("active");
-        const mainEl = document.querySelector("main");
-        if (mainEl) mainEl.scrollTop = 0;
-      }
-    }
-
-    // ВАЛИДАЦИЈА ФОРМЕ & ЈМБГ АЛГОРИТАМ
-    const fullNameInput = document.getElementById("fullName");
-    const citySelect = document.getElementById("city");
-    
-    // Нова поља за датум рођења
-    const dobDay = document.getElementById("dobDay");
-    const dobMonth = document.getElementById("dobMonth");
-    const dobYear = document.getElementById("dobYear");
-
-    const jmbgInput = document.getElementById("jmbg");
-    const jmbgCounter = document.getElementById("jmbgCounter");
-    const jmbgError = document.getElementById("jmbgError");
-    const btnToBallot = document.getElementById("btnToBallot");
-    const btnToConfirm = document.getElementById("btnToConfirm");
-
-    // Форсирање само бројева за дан и годину
-    dobDay.addEventListener("input", function() {
-      this.value = this.value.replace(/\D/g, "").slice(0, 2);
-      validate();
-    });
-
-    dobYear.addEventListener("input", function() {
-      this.value = this.value.replace(/\D/g, "").slice(0, 4);
-      validate();
-    });
-
-    jmbgInput.addEventListener("input", function() {
-      this.value = this.value.replace(/\D/g, "").slice(0, 13);
-      jmbgCounter.textContent = `${this.value.length}/13`;
-      validate();
-    });
-
-    fullNameInput.addEventListener("input", validate);
-    citySelect.addEventListener("change", validate);
-    dobMonth.addEventListener("change", validate);
-
-    // Функција која проверава да ли је ЈМБГ математички тачан и да ли се поклапа са датумом
-    function checkJMBG(jmbg, dobStr) {
-      if (jmbg.length !== 13) return false;
-      if (!dobStr) return false;
-
-      const parts = dobStr.split('-');
-      if (parts.length !== 3) return false;
+      document.getElementById('headerTitle').textContent = tab === 'analytics' ? 'Аналитика Система' : 'Регистар Бирача';
       
-      const year = parts[0];
-      const month = parts[1];
-      const day = parts[2];
-
-      const y = year.slice(-3); // узима последње 3 цифре године
-      
-      const jDay = jmbg.substring(0, 2);
-      const jMonth = jmbg.substring(2, 4);
-      const jYear = jmbg.substring(4, 7);
-
-      // Провера поклапања датума рођења и ЈМБГ-а
-      if (day !== jDay || month !== jMonth || y !== jYear) {
-          return false;
-      }
-
-      // Званична провера контролне цифре (Mod 11 алгоритам)
-      const v = jmbg.split('').map(Number);
-      const s = 7*v[0] + 6*v[1] + 5*v[2] + 4*v[3] + 3*v[4] + 2*v[5] +
-                7*v[6] + 6*v[7] + 5*v[8] + 4*v[9] + 3*v[10] + 2*v[11];
-      const k = s % 11;
-      let m = 0;
-      
-      if (k === 1) return false; // Неважећи број
-      if (k > 1) m = 11 - k;
-
-      if (m !== v[12]) return false;
-
-      return true;
+      closeTicket(); // Затвори тикет при промени таба
     }
 
-    function validate() {
-      const isName = fullNameInput.value.trim().length >= 3;
-      const isCity = citySelect.value !== "";
-      
-      let d = dobDay.value;
-      let m = dobMonth.value;
-      let y = dobYear.value;
-      
-      let dobVal = "";
-      // Проверавамо да ли су дан, месец и година попуњени (година мора имати тачно 4 цифре)
-      if (d && d !== "00" && m && y.length === 4) {
-          d = d.padStart(2, '0'); // додаје 0 на почетак ако је унет један број (нпр "5" постаје "05")
-          dobVal = `${y}-${m}-${d}`;
-      }
+    // ФЕТЧОВАЊЕ ПОДАТАКА
+    async function fetchData() {
+      const loader = document.getElementById('loader');
+      loader.classList.remove('hidden');
 
-      const jmbgVal = jmbgInput.value;
-      let isJmbgValid = false;
-
-      if (jmbgVal.length === 13) {
-        if (dobVal) {
-          isJmbgValid = checkJMBG(jmbgVal, dobVal);
-          if (!isJmbgValid) {
-            jmbgError.classList.add("show");
-          } else {
-            jmbgError.classList.remove("show");
-          }
-        } else {
-          jmbgError.classList.remove("show");
-        }
-      } else {
-         jmbgError.classList.remove("show");
-      }
-
-      btnToBallot.disabled = !(isName && isCity && dobVal && isJmbgValid);
-    }
-
-    // Форматира датум из YYYY-MM-DD у DD.MM.YYYY. за приказ
-    function formatDateDisplay(yyyy_mm_dd) {
-      if (!yyyy_mm_dd) return "";
-      const p = yyyy_mm_dd.split('-');
-      return `${p[2]}.${p[1]}.${p[0]}.`;
-    }
-
-    // Маскира ЈМБГ због приватности при приказу
-    function maskJMBG(jmbg) {
-      if (jmbg.length !== 13) return jmbg;
-      return jmbg.slice(0, 7) + "******";
-    }
-
-    function runProcessingModal(title, steps, onComplete) {
-      const modal = document.getElementById("procModal");
-      const pTitle = document.getElementById("procTitle");
-      const pSub = document.getElementById("procSub");
-      const pBar = document.getElementById("procBar");
-
-      pTitle.textContent = title;
-      pBar.style.width = "0%";
-      modal.classList.add("active");
-
-      let idx = 0;
-      function step() {
-        if (idx >= steps.length) {
-          setTimeout(() => {
-            modal.classList.remove("active");
-            pBar.style.width = "0%";
-            if (onComplete) onComplete();
-          }, 400);
+      try {
+        const response = await fetch(scriptURL);
+        const data = await response.json();
+        
+        if (data.error) {
+          alert("Грешка при повлачењу података: " + data.error);
+          loader.classList.add('hidden');
           return;
         }
 
-        pSub.textContent = steps[idx];
-        pBar.style.width = `${((idx + 1) / steps.length) * 100}%`;
-        idx++;
-        setTimeout(step, 600);
+        // 1. Ажурирај Аналитику
+        const visits = data.analytics.visits || 0;
+        const completed = data.analytics.completed || 0;
+        const conv = visits > 0 ? Math.round((completed / visits) * 100) : 0;
+
+        document.getElementById('valVisits').textContent = visits;
+        document.getElementById('valCompleted').textContent = completed;
+        document.getElementById('valConversion').textContent = conv + "%";
+
+        // 2. Ажурирај Листу (Регистар)
+        globalRegistryData = data.registry || [];
+        renderList();
+
+      } catch (error) {
+        alert("Дошло је до грешке са мрежом приликом повезивања са сервером.");
+      } finally {
+        loader.classList.add('hidden');
       }
-      step();
     }
 
-    function startVerification() {
-      state.fullName = fullNameInput.value.trim();
-      state.city = citySelect.value;
-      const d = dobDay.value.padStart(2, '0');
-      state.dob = `${dobYear.value}-${dobMonth.value}-${d}`;
-      state.jmbg = jmbgInput.value;
+    // РЕНДЕРИСАЊЕ ЛИСТЕ
+    function renderList() {
+      const tbody = document.getElementById('listBody');
+      tbody.innerHTML = '';
 
-      runProcessingModal(
-        "Верификација података",
-        [
-          "Провера уноса...",
-          "Повезивање са регистром за град " + state.city + "...",
-          "Потврда бирачког права...",
-          "Припрема листића..."
-        ],
-        () => showWindow("win-ballot")
-      );
-    }
+      if (globalRegistryData.length === 0) {
+        tbody.innerHTML = '<div style="padding: 24px; text-align:center; color: var(--text-muted); font-size: 13px; text-transform: uppercase;">Нема података у регистру.</div>';
+        return;
+      }
 
-    function selectCandidate() {
-      document.getElementById("candidateCard").classList.add("selected");
-      hasSelected = true;
-      btnToConfirm.disabled = false;
-    }
+      globalRegistryData.forEach((row, index) => {
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        // Кад кликнеш, отвара се тикет и прослеђује се индекс
+        div.onclick = () => openTicket(index, div);
 
-    function prepareConfirmation() {
-      if (!hasSelected) return;
-      document.getElementById("confName").textContent = state.fullName;
-      document.getElementById("confCity").textContent = state.city;
-      document.getElementById("confDob").textContent = formatDateDisplay(state.dob);
-      document.getElementById("confJmbg").textContent = maskJMBG(state.jmbg);
-      showWindow("win-confirm");
-    }
-
-    function startSealing() {
-      const now = new Date();
-      const dd = String(now.getDate()).padStart(2, '0');
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const yyyy = now.getFullYear();
-      const hh = String(now.getHours()).padStart(2, '0');
-      const min = String(now.getMinutes()).padStart(2, '0');
-      state.timestamp = `${dd}.${mm}.${yyyy}. u ${hh}:${min}`;
-
-      const payload = {
-        fullName: state.fullName,
-        city: state.city,
-        dob: state.dob,
-        jmbg: state.jmbg,
-        choice: state.choice,
-        timestamp: state.timestamp
-      };
-
-      const modal = document.getElementById("procModal");
-      const pTitle = document.getElementById("procTitle");
-      const pSub = document.getElementById("procSub");
-      const pBar = document.getElementById("procBar");
-
-      pTitle.textContent = "Упис у регистар";
-      pSub.textContent = "Повезивање са базом и упис података...";
-      pBar.style.width = "40%";
-      modal.classList.add("active");
-
-      fetch(scriptURL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=utf-8'
-        },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.result === "success") {
-          pBar.style.width = "100%";
-          pSub.textContent = "Успешно уписано! Генерисање потврде...";
-          
-          setTimeout(() => {
-            modal.classList.remove("active");
-            
-            document.getElementById("rcptName").textContent = state.fullName;
-            document.getElementById("rcptCity").textContent = state.city;
-            document.getElementById("rcptDob").textContent = formatDateDisplay(state.dob);
-            document.getElementById("rcptJmbg").textContent = maskJMBG(state.jmbg);
-            document.getElementById("rcptTime").textContent = state.timestamp;
-            
-            showWindow("win-receipt");
-          }, 800);
-        } else {
-          throw new Error(data.error || "Грешка при слању.");
-        }
-      })
-      .catch(error => {
-        modal.classList.remove("active");
-        alert("Дошло је до грешке. Проверите интернет везу и покушајте поново.");
+        div.innerHTML = `
+          <div class="item-name">${row.fullName || "Непознато"}</div>
+          <div class="item-city">${row.city || "-"}</div>
+          <div class="item-date">${row.timestamp || "-"}</div>
+        `;
+        tbody.appendChild(div);
       });
     }
 
-    function resetPortal() {
-      fullNameInput.value = "";
-      citySelect.value = "";
-      dobDay.value = "";
-      dobMonth.value = "";
-      dobYear.value = "";
-      jmbgInput.value = "";
-      jmbgCounter.textContent = "0/13";
-      btnToBallot.disabled = true;
-      btnToConfirm.disabled = true;
-      hasSelected = false;
-      document.getElementById("candidateCard").classList.remove("selected");
+    // ПАМЕТНО ПРЕПОЗНАВАЊЕ ПОТПИСА
+    // Обрађује: =IMAGE("url"), http линкове, data:image base64, или обичан текст
+    function parseSignature(sig) {
+      if (!sig || sig.trim() === "") return "<span style='color: var(--text-muted); font-size:12px;'>Нема потписа</span>";
+      
+      // Ако је Google Sheets =IMAGE формула
+      if (sig.toUpperCase().startsWith("=IMAGE(")) {
+        const match = sig.match(/"([^"]+)"/);
+        if (match && match[1]) {
+          return `<img src="${match[1]}" alt="Потпис бирача">`;
+        }
+      }
+      
+      // Ако је директан линк или base64
+      if (sig.startsWith("http") || sig.startsWith("data:image")) {
+        return `<img src="${sig}" alt="Потпис бирача">`;
+      }
 
-      state.fullName = "";
-      state.city = "";
-      state.dob = "";
-      state.jmbg = "";
-      state.timestamp = "";
-
-      showWindow("win-landing");
+      // Ако је текст (нпр. "Без потписа (ручно)")
+      return `<span style="font-weight:600; font-size:13px; color: var(--text-main);">${sig}</span>`;
     }
+
+    // ОТВАРАЊЕ ТИКЕТА
+    function openTicket(index, rowElement) {
+      // Селекција реда
+      document.querySelectorAll('.list-item').forEach(el => el.classList.remove('selected'));
+      rowElement.classList.add('selected');
+
+      const data = globalRegistryData[index];
+
+      document.getElementById('tName').textContent = data.fullName || "Непознато";
+      document.getElementById('tCityTime').textContent = `${data.city || "Непознат град"} • ${data.timestamp || ""}`;
+      
+      document.getElementById('tDob').textContent = data.dob || "Није унето";
+      
+      // Скидање апострофа са ЈМБГ-а ако је Google Sheets додао (нпр. '0505...)
+      let jmbgClean = data.jmbg || "";
+      if(jmbgClean.startsWith("'")) jmbgClean = jmbgClean.substring(1);
+      document.getElementById('tJmbg').textContent = jmbgClean || "Није унето";
+      
+      document.getElementById('tChoice').textContent = data.choice || "-";
+
+      // Рендер потписа
+      document.getElementById('tSignature').innerHTML = parseSignature(data.signature);
+
+      document.getElementById('ticketPane').classList.add('active');
+      document.getElementById('regContainer').classList.add('ticket-open'); // За мобилни приказ
+    }
+
+    // ЗАТВАРАЊЕ ТИКЕТА
+    function closeTicket() {
+      document.getElementById('ticketPane').classList.remove('active');
+      document.getElementById('regContainer').classList.remove('ticket-open');
+      document.querySelectorAll('.list-item').forEach(el => el.classList.remove('selected'));
+    }
+
+    // Учитај податке при покретању
+    window.onload = fetchData;
+
   </script>
 </body>
 </html>
